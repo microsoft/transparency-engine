@@ -2107,14 +2107,14 @@ files = [
 
 [[package]]
 name = "py4j"
-version = "0.10.9.2"
+version = "0.10.9.5"
 description = "Enables Python programs to dynamically access arbitrary Java objects"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "py4j-0.10.9.2-py2.py3-none-any.whl", hash = "sha256:bf0485388e415ff26710d2dc719cb0ede16cf1164b1ee757e0ebb2e98c471521"},
-    {file = "py4j-0.10.9.2.tar.gz", hash = "sha256:624f97c363b8dd84822bc666b12fa7f7d97824632b2ff3d852cc491359ce7615"},
+    {file = "py4j-0.10.9.5-py2.py3-none-any.whl", hash = "sha256:52d171a6a2b031d8a5d1de6efe451cf4f5baff1a2819aabc3741c8406539ba04"},
+    {file = "py4j-0.10.9.5.tar.gz", hash = "sha256:276a4a3c5a2154df1860ef3303a927460e02e97b047dc0a47c1c3fb8cce34db6"},
 ]
 
 [[package]]
@@ -2299,17 +2299,17 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pyspark"
-version = "3.2.0"
+version = "3.2.2"
 description = "Apache Spark Python API"
 category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "pyspark-3.2.0.tar.gz", hash = "sha256:bfea06179edbfb4bc76a0f470bd3c38e12f00e1023e3ad0373558d07cff102ab"},
+    {file = "pyspark-3.2.2.tar.gz", hash = "sha256:5455214cf0b83d4a184cda25ca3b0812481915353b180cf7d7ac227728a4d99e"},
 ]
 
 [package.dependencies]
-py4j = "0.10.9.2"
+py4j = "0.10.9.5"
 
 [package.extras]
 ml = ["numpy (>=1.7)"]
@@ -3197,4 +3197,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.10,>=3.8"
-content-hash = "9781a7713760049a3d7de3370e37e42ee3019d9c39e297c00071c9385fca8d4d"
+content-hash = "d8fd2674c7b1bd52631c52dddfe3e466befcd8ca8662ac6434b3e1dc4c9c1adb"
