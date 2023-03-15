@@ -244,9 +244,9 @@ def generate_procurement_data(
     Params:
         output_path: str
             Path to save the synthesized data
-        n_entities: int, default = 5000
+        n_entities: int, default = 1000
             Number of entities to generate
-        n_communities: int, default = 50
+        n_communities: int, default = 20
             Number of communities in the entity graph.
         n_periods: int, default = 20
             Number of observed periods

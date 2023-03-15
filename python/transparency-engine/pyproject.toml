@@ -12,7 +12,6 @@ authors = [
     "Chris Trevino <chris.trevino@microsoft.com>",
     ]
 license = "MIT"
-readme = "README.md"
 packages = [{include = "transparency_engine"}]
 
 
