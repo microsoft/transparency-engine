@@ -31,7 +31,7 @@ from transparency_engine.pipeline.schemas import (
     REVIEW_FLAG_SCHEMA,
     STATIC_SCHEMA,
 )
-from transparency_engine.spark.utils import spark
+from transparency_engine.spark.utils import spark, sc
 
 
 logger = logging.getLogger(__name__)

@@ -19,7 +19,6 @@ from transparency_engine.modules.data_generator.synthetic_data_generator import 
     SyntheticDataGenerator,
 )
 from transparency_engine.pipeline.schemas import ATTRIBUTE_ID
-from transparency_engine.spark.utils import sc
 
 
 procurement_configs = DataGeneratorConfig(
