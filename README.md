@@ -63,7 +63,7 @@ yarn
 yarn build
 yarn start # run the webapp locally
 ```
-The webapp will be available at http://localhost:3000"
+The webapp will be available at http://localhost:3000
 
 
 ## Contributing
