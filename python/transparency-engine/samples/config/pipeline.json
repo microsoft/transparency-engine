@@ -1,0 +1,17 @@
+{
+    "name": "A pipeline",
+    "description": "A pipeline",
+    "storage": {
+        "type": "parquet",
+        "root": "output/demo/"
+    },
+    "steps": [
+        "prep",
+        "individual_link_prediction",
+        "individual_link_filtering",
+        "macro_link_prediction",
+        "macro_link_filtering",
+        "scoring",
+        "report"
+    ]
+}

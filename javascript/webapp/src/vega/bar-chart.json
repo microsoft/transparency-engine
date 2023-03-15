@@ -1,0 +1,95 @@
+{
+	"$schema": "https://vega.github.io/schema/vega/v5.json",
+	"description": "A basic grouped bar chart example.",
+	"padding": 5,
+
+	"data": [
+		{
+			"name": "chart-data"
+		}
+	],
+
+	"scales": [
+		{
+			"name": "xscale",
+			"type": "band",
+			"domain": { "data": "chart-data", "field": "quarter" },
+			"range": "width",
+			"padding": 0.2
+		},
+		{
+			"name": "yscale",
+			"type": "linear",
+			"domain": { "data": "chart-data", "field": "value" },
+			"range": "height",
+			"round": true,
+			"zero": true,
+			"nice": true
+		},
+		{
+			"name": "color",
+			"type": "ordinal",
+			"domain": { "data": "chart-data", "field": "position" },
+			"range": "category"
+		}
+	],
+
+	"axes": [
+		{
+			"orient": "left",
+			"scale": "yscale",
+			"tickSize": 0,
+			"labelPadding": 4,
+			"zindex": 1
+		},
+		{ "orient": "bottom", "scale": "xscale" }
+	],
+
+	"marks": [
+		{
+			"type": "group",
+
+			"from": {
+				"facet": {
+					"data": "chart-data",
+					"name": "facet",
+					"groupby": "quarter"
+				}
+			},
+
+			"encode": {
+				"enter": {
+					"x": { "scale": "xscale", "field": "quarter" }
+				}
+			},
+
+			"signals": [{ "name": "width", "update": "bandwidth('xscale')" }],
+
+			"scales": [
+				{
+					"name": "pos",
+					"type": "band",
+					"range": "width",
+					"domain": { "data": "facet", "field": "position" }
+				}
+			],
+
+			"marks": [
+				{
+					"name": "bars",
+					"from": { "data": "facet" },
+					"type": "rect",
+					"encode": {
+						"enter": {
+							"x": { "scale": "pos", "field": "position" },
+							"width": { "scale": "pos", "band": 1 },
+							"y": { "scale": "yscale", "field": "value" },
+							"y2": { "scale": "yscale", "value": 0 },
+							"fill": { "scale": "color", "field": "position" }
+						}
+					}
+				}
+			]
+		}
+	]
+}

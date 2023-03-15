@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+
+  backend_api:
+    build: ./python/api-backend
+    environment:
+      - ENABLE_CORS=http://localhost:3000
+      - REDIS_URL=redis://redis:6379/0
+      - STORAGE=/data
+    ports:
+      - 8081:8081
+    depends_on:
+      - redis
+    profiles:
+      - all
+      - backend
+
+  redis:
+    image: redis:6-alpine
+    profiles:
+      - all
+      - backend
+      - storage

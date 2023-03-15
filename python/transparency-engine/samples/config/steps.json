@@ -1,0 +1,176 @@
+{
+    "steps": {
+        "prep": [
+            {
+                "name": "activity",
+                "type": "dynamic",
+                "path": "./samples/input_data/activity.csv",
+                "steps": [
+                    "load",
+                    "preprocess"
+                ],
+                "config": {}
+            },
+            {
+                "name": "contact",
+                "type": "static",
+                "path": "./samples/input_data/contact.csv",
+                "steps": [
+                    "load",
+                    "preprocess"
+                ],
+                "fuzzy_match_on": [
+                    "name",
+                    "address"
+                ],
+                "config": {}
+            },
+            {
+                "name": "ownership",
+                "type": "static",
+                "path": "./samples/input_data/ownership.csv",
+                "steps": [
+                    "load",
+                    "preprocess"
+                ],
+                "config": {}
+            },
+            {
+                "name": "entity",
+                "type": "entity",
+                "path": "./samples/input_data/entity.csv",
+                "steps": [
+                    "load"
+                ]
+            },
+            {
+                "name": "entityReviewFlag",
+                "type": "reviewflag",
+                "path": "./samples/input_data/redflag.csv",
+                "metadata": {
+                    "type": "reviewflagmetadata",
+                    "path": "./samples/input_data/flag_definitions.csv"
+                },
+                "steps": [
+                    "load",
+                    "preprocess"
+                ]
+            },
+            {
+                "name": "attributeDefinition",
+                "type": "metadata",
+                "path": "./samples/input_data/attribute_definitions.csv",
+                "steps": [
+                    "load"
+                ]
+            }
+        ],
+        "individual_link_prediction": {
+            "static": [
+                {
+                    "name": "contact",
+                    "config": {}
+                },
+                {
+                    "name": "ownership",
+                    "config": {}
+                }
+            ],
+            "dynamic": [
+                {
+                    "name": "activity",
+                    "config": {}
+                }
+            ]
+        },
+        "individual_link_filtering": {
+            "dynamic": [
+                {
+                    "name": "activity",
+                    "config": {
+                        "sync_attributes": [
+                            "tender",
+                            "buyer",
+                            "item"
+                        ],
+                        "async_attributes": [
+                            "buyer",
+                            "item"
+                        ]
+                    }
+                }
+            ]
+        },
+        "macro_link_prediction": {
+            "name": "macro",
+            "inputs": [
+                "activity_filtered_links",
+                "contact_links",
+                "ownership_links"
+            ]
+        },
+        "macro_link_filtering": {
+            "name": "macro",
+            "static": [
+                {
+                    "name": "contact",
+                    "config": {}
+                },
+                {
+                    "name": "ownership",
+                    "config": {}
+                }
+            ],
+            "dynamic": [
+                {
+                    "name": "activity",
+                    "config": {}
+                }
+            ]
+        },
+        "scoring": {
+            "entity": "entity",
+            "entity_flag": "entityReviewFlag",
+            "flag_metadata": "entityReviewFlag_metadata",
+            "predicted_links": "macro",
+            "config": {}
+        },
+        "report": {
+            "entity": "entity",
+            "static": [
+                {
+                    "name": "contact",
+                    "config": {}
+                },
+                {
+                    "name": "ownership",
+                    "config": {}
+                }
+
+            ],
+            "dynamic": [
+                {
+                    "name": "activity",
+                    "config": {}
+                }
+            ],
+            "other": [],
+            "entity_flag": "entityReviewFlag",
+            "network_score": "network_scoring",
+            "predicted_links": "macro",
+            "flag_metadata": "entityReviewFlag_metadata",
+            "attribute_metadata": "attributeDefinition",
+            "config": {
+                "sync_attributes": [
+                    "tender",
+                    "buyer",
+                    "item"
+                ],
+                "async_attributes": [
+                    "buyer",
+                    "item"
+                ]
+            }
+        }
+    }
+}

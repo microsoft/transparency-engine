@@ -1,0 +1,25 @@
+# https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.poetry/
+
+dist/
+lib/
+build/
+coverage/
+node_modules/
+.turbo/
+*.zip
+*-*.log
+
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.deploy-config/

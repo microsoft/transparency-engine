@@ -1,0 +1,118 @@
+[tool.poetry]
+name = "transparency-engine"
+version = "0.1.0"
+description = ""
+authors = [
+    "Darren Edge <darren.edge@microsoft.com>",
+    "Ha Trinh <trinhha@microsoft.com>", 
+    "Alonso Guevara <alonsog@microsoft.com>",
+    "Nathan Evans <nathan.evans@microsoft.com>",
+    "Gaudy Blanco Meneses <gaudyb@microsoft.com>",
+    "Monica Carvajal <nathan.evans@microsoft.com>",
+    "Chris Trevino <chris.trevino@microsoft.com>",
+    ]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "transparency_engine"}]
+
+
+[tool.poetry.dependencies]
+python = "<3.10,>=3.8"
+datasketch = "^1.5.8"
+faker = "^16.1.0"
+faiss-cpu = "^1.7.3"
+graspologic = "^2.0.1"
+kneed = "^0.8.2"
+pyspark = "3.2.0"
+numpy = "^1.20.3"
+redis = {extras = ["hiredis"], version = "^4.4.2"}
+dependency-injector = "^4.41.0"
+pydantic = "^1.10.4"
+networkx = "^3.0"
+
+
+[tool.poetry.group.dev.dependencies]
+poethepoet = "^0.18.0"
+bandit = "^1.7.4"
+black = "^22.12.0"
+codespell = "^2.2.2"
+flake8 = "^4.0.1"
+ipykernel = "^6.7.0"
+isort = "^5.11.4"
+mypy = "^0.991"
+pydocstyle = "^6.2.3"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+semversioner = "^1.4.1"
+toml = "^0.10.2"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^5.3.0"
+sphinx-rtd-theme = "^1.1.1"
+pydata-sphinx-theme = "^0.12.0"
+sphinx-copybutton = "^0.5.1"
+sphinx-design = "^0.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+py_version = 36
+profile = "black"
+force_single_line = false
+combine_as_imports = true
+lines_between_types = 1
+lines_after_imports = 2
+src_paths = ["transparency_engine", "tests"]
+extend_skip = ["setup.py"]
+
+
+[tool.black]
+target-version = ['py36']
+force-exclude = '''
+.*/setup\.py$
+'''
+
+[tool.mypy]
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+files = "transparency_engine"
+
+[tool.coverage.run]
+omit = ["tests/*", ".*", "data/*"]
+
+[tool.poe.tasks]
+_flake8 = 'flake8 transparency_engine'
+_bandit = 'bandit -r transparency_engine'
+_black = 'black transparency_engine tests'
+_isort = 'isort transparency_engine tests'
+_black_check = 'black --check transparency_engine tests'
+_isort_check = 'isort --check transparency_engine tests'
+_pydocstyle = 'pydocstyle transparency_engine'
+_codespell = 'codespell dodiscover/ doc/ examples/ --ignore-words=.codespellignore --skip "**/_build/*,**/auto_examples/*"'
+_changelog = 'semversioner changelog > CHANGELOG.md'
+_apply_version = 'semversioner release'
+test = "pytest  -v tests"
+
+[[tool.poe.tasks.lint]]
+sequence = ['_flake8', '_bandit', '_codespell', '_pydocstyle']
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.format]]
+sequence = ['_black', '_isort']
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.check_format]]
+sequence = ['_black_check', '_isort_check']
+ignore_fail = 'return_non_zero'
+
+[tool.pydocstyle]
+match = '^(?!setup|__init__|test_).*\.py'
+match-dir = '^transparency_engine.*'

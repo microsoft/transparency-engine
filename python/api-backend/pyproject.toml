@@ -1,0 +1,92 @@
+[tool.poetry]
+name = "api-backend"
+version = "0.1.0"
+description = ""
+authors = ["Alonso Guevara <alonsog@microsoft.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "api_backend"}]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.10"
+fastapi = "^0.89.1"
+numpy = "^1.24.1"
+pandas = "^1.5.2"
+uvicorn = "^0.20.0"
+python-dotenv = "^0.21.1"
+sqlalchemy = "^2.0.4"
+pandas-stubs = "^1.5.3.230214"
+pyodbc = "^4.0.35"
+pydantic = "^1.10.5"
+
+[tool.poetry.group.utility.dependencies]
+gunicorn = "^20.1.0"
+pydantic = "^1.10.4"
+
+
+[tool.poetry.group.graph.dependencies]
+celery = "^5.2.7"
+networkx = "^3.0"
+scikit-learn = "^1.2.0"
+redis = {extras = ["hiredis"], version = "^4.4.1"}
+python-multipart = "^0.0.5"
+
+
+[tool.poetry.group.dev.dependencies]
+watchfiles = "^0.18.1"
+black = "^22.12.0"
+isort = "^5.11.4"
+flake8 = "^4.0.1"
+poethepoet = "^0.18.0"
+pytest = "^7.2.0"
+mypy = "^1.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+test = { shell = "pytest tests/" }
+_flake8 = { shell = "flake8 api_backend/ tests/" }
+_isort = { shell = "isort ." }
+_black = { shell = "black ." }
+_mypy = { shell = "mypy ./api_backend" }
+_black_check = 'black --check .'
+_isort_check = 'isort --check .'
+
+[tool.poe.tasks.format]
+sequence = ["_isort", "_black"]
+ignore_fail = "return_non_zero"
+
+[tool.poe.tasks.format_check]
+sequence = ["_isort_check", "_black_check"]
+ignore_fail = "return_non_zero"
+
+[tool.poe.tasks.lint]
+sequence = ["format_check", "_flake8"]
+ignore_fail = "return_non_zero"
+
+[tool.poe.tasks.mypy]
+sequence = ["_mypy"]
+ignore_fail = "return_non_zero"
+
+[tool.black]
+line-length = 120
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+(
+      __pycache__
+    | \.github
+)
+'''
+
+[tool.pylint]
+max-line-length = 120
+disable = ["W0511"]
+
+[tool.isort]
+profile = 'black'
+multi_line_output = 3
+line_length = 120
+py_version = 38

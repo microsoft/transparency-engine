@@ -1,0 +1,9 @@
+.yarn/
+.pnp*
+build/
+dist/
+lib/
+storybook-static/
+coverage/
+docs/
+docsTemp/

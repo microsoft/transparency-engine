@@ -1,0 +1,17 @@
+dist/
+lib/
+build/
+coverage/
+node_modules/
+.turbo/
+*.zip
+*-*.log
+
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.deploy-config/
+
+.env*
