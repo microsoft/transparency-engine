@@ -201,7 +201,7 @@ def _summary_related_entities(  # nosec - B107
                                             .withColumnRenamed(schemas.TARGET, report_schemas.RELATED_ENTITY)
 
     summary_data = summary_data.join(
-            scoring_summaries, on=[schemas.ENTITY_ID, report_schemas.RELATED_ENTITY], how="left"
+            F.broadcast(scoring_summaries), on=[schemas.ENTITY_ID, report_schemas.RELATED_ENTITY], how="left"
     )
 
     report_columns = [

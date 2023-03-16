@@ -229,30 +229,25 @@ def compute_network_score(  # nosec - B107
 
     # normalize measures using max scaler and rank scaler
     measure_cols = [column for column in NetworkMeasures.list()]
-    all_measure_cols = []
-    for column in measure_cols:
-        logger.info(f"Normalizing: {column}")
-        max_scaled_output_col = f"{column}_{NormalizationTypes.BY_MAX_VALUE}"
-        network_measure_data = normalize_max_scale(
-            df=network_measure_data, input_col=column, output_col=max_scaled_output_col
-        )
-        all_measure_cols.append(column)
-        all_measure_cols.append(max_scaled_output_col)
-        
-        rank_scaled_output_col = f"{column}_{NormalizationTypes.BY_RANK_VALUE}"
-        network_measure_data = normalize_rank(
-            df=network_measure_data,
-            input_col=column,
-            output_col=rank_scaled_output_col,
-            remove_null=True,
-            remove_zero=False,
-            reset_zero=True,
-        )
-        all_measure_cols.append(rank_scaled_output_col)
+    for measure in configs.selected_measures:
+        if measure.normalization == NormalizationTypes.BY_MAX_VALUE:
+            logger.info(f"Normalizing by max scale: {measure.name}")
+            scaled_output_col = f"{measure.name}_{NormalizationTypes.BY_MAX_VALUE}"
+            network_measure_data = normalize_max_scale(
+                df=network_measure_data, input_col=measure.name, output_col=scaled_output_col
+            )
+            measure_cols.append(scaled_output_col)
+        else:
+            logger.info(f"Normalizing by rank scale: {measure.name}")
+            scaled_output_col = f"{measure.name}_{NormalizationTypes.BY_RANK_VALUE}"
+            network_measure_data = normalize_rank(
+                df=network_measure_data, input_col=measure.name, output_col=scaled_output_col
+            )
+            measure_cols.append(scaled_output_col)
 
     # collect all calculated measures to be used for scoring
     all_measures = F.create_map(
-        *list(chain(*[[F.lit(name), F.col(name)] for name in all_measure_cols]))
+        *list(chain(*[[F.lit(name), F.col(name)] for name in measure_cols]))
     )
     network_measure_data = network_measure_data.withColumn("all_measures", all_measures)
 
@@ -266,23 +261,11 @@ def compute_network_score(  # nosec - B107
     logger.info(f'Finished computing raw final network score')
 
     # normalize the final network score
-    max_scaled_score_col = (
-        f"{ScoringTypes.FINAL_ENTITY_SCORE}_{NormalizationTypes.BY_MAX_VALUE}"
+    scaled_score_col = (
+        f"{ScoringTypes.FINAL_NETWORK_SCORE}_{NormalizationTypes.BY_MAX_VALUE}"
     )
     network_measure_data = normalize_max_scale(
-        df=network_measure_data, input_col=column, output_col=max_scaled_score_col
-    )
-    
-    rank_scaled_score_col = (
-        f"{ScoringTypes.FINAL_ENTITY_SCORE}_{NormalizationTypes.BY_RANK_VALUE}"
-    )
-    network_measure_data = normalize_rank(
-        df=network_measure_data,
-        input_col=column,
-        output_col=rank_scaled_score_col,
-        remove_null=True,
-        remove_zero=False,
-        reset_zero=True,
+        df=network_measure_data, input_col=ScoringTypes.FINAL_NETWORK_SCORE, output_col=scaled_score_col
     )
     
     return network_measure_data

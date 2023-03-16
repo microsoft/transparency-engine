@@ -25,8 +25,7 @@ spark: SparkSession = (
     SparkSession.builder.enableHiveSupport().config(conf=config).getOrCreate()
 )
 
-
-sc: SparkContext = SparkContext.getOrCreate()
+sc: SparkContext = spark.sparkContext
 
 # Create SparkConf object
 conf: SparkConf = sc.getConf()
