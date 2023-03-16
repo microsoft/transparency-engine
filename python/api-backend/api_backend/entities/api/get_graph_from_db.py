@@ -11,9 +11,6 @@ from sqlalchemy import MetaData, Table, and_, select
 
 from api_backend.model.graph_model import Graph
 from api_backend.util.db_engine import get_engine
-from api_backend.util.load_env import load_env
-
-load_env()
 
 
 def get_graph_from_db(source: str, target: Optional[str] = None) -> Graph:
@@ -27,7 +24,7 @@ def get_graph_from_db(source: str, target: Optional[str] = None) -> Graph:
     Returns:
         A Graph object representing the data retrieved from the database.
     """
-    graph_table = os.environ["GRAPH_TABLE"]
+    graph_table = os.getenv("GRAPH_TABLE", "")
     engine = get_engine()
     conn = engine.connect()
 

@@ -15,6 +15,6 @@ async def main():
     return {"message": "entities api is healthy"}
 
 
-@entities_router.get("/graph")
-async def graph(source=Query(None), target=Query(None)):
+@entities_router.get("/graph/{source}")
+async def graph(source, target=Query(None)):
     return await get_graph(source, target)

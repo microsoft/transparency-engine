@@ -10,15 +10,12 @@ from sqlalchemy import MetaData, Table, select
 from api_backend.report.builders.report import build_report
 from api_backend.report.util.parsers import parse_entity_details, parse_filtered_activity_attributes, parse_raw_report
 from api_backend.util.db_engine import get_engine
-from api_backend.util.load_env import load_env
-
-load_env()
 
 
 def get_report_from_db(id=""):
-    report_table_name = os.environ["RAW_REPORT_TABLE"]
-    entity_table_name = os.environ["ENTITY_TABLE"]
-    filtered_attributes_table_name = os.environ["FILTERED_ACTIVITY_ATTRIBUTES_TABLE"]
+    report_table_name = os.getenv("RAW_REPORT_TABLE", "")
+    entity_table_name = os.getenv("ENTITY_TABLE", "")
+    filtered_attributes_table_name = os.getenv("ACTIVITY_TABLE", "")
     engine = get_engine()
 
     metadata = MetaData()
@@ -58,4 +55,4 @@ def get_report_from_db(id=""):
         }
 
     conn.close()
-    return build_report(raw_report, entity_details, filtered_activity_attributes)
+    return build_report(id, raw_report, entity_details, filtered_activity_attributes)
