@@ -1,0 +1,4 @@
+controller:
+  service:
+    loadBalancerIP: 20.25.93.29
+    externalTrafficPolicy: Local
