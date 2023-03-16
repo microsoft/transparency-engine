@@ -358,8 +358,7 @@ class TransparencyPipeline:
             report_step.get("flag_metadata", "")
         )
         attribute_metadata_df = self.data_handler.load_data(
-            report_step.get(f"{report_step.get('attribute_metadata', '')}_prep")
-        )
+            f"{report_step.get('attribute_metadata', '')}_prep")
 
         sync_attributes = report_step.get("config", {}).get("sync_attributes", [])
         async_attributes = report_step.get("config", {}).get("async_attributes", [])

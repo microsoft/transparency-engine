@@ -315,6 +315,7 @@ def __direct_link_summary(  # nosec - B107
                 shared_detail_text = (
                     f"{attribute_name_mapping.get(shared_detail[0], shared_detail[0])}"
                 )
+            summaries.append(shared_detail_text)
         elif len(path) == 4:
             # this is a direct link with fuzzy match, get fuzzy-matched details
             if source != path[0]:

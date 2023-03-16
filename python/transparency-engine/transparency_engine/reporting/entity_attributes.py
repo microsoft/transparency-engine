@@ -109,7 +109,7 @@ def __get_entity_attributes(
     )
     all_attribute_data = reduce(DataFrame.unionAll, attribute_data_list)
 
-    # updata attribute metadata
+    # update attribute metadata
     if attribute_metadata is None:
         all_attribute_metadata = all_attribute_data.select(
             ATTRIBUTE_ID
@@ -124,10 +124,13 @@ def __get_entity_attributes(
             .dropDuplicates()
             .join(attribute_metadata, on=ATTRIBUTE_ID, how="leftanti")
         )
-        missing_metadata = attribute_metadata.withColumn(
-            NAME, F.col(ATTRIBUTE_ID)
-        ).withColumn(DESCRIPTION, F.lit(""))
-        all_attribute_metadata = attribute_metadata.union(missing_metadata)
+        if missing_metadata.count() > 0:
+            missing_metadata = missing_metadata.withColumn(
+                NAME, F.col(ATTRIBUTE_ID)
+            ).withColumn(DESCRIPTION, F.lit(""))
+            all_attribute_metadata = attribute_metadata.union(missing_metadata)
+        else:
+            all_attribute_metadata = attribute_metadata
     all_attribute_metadata = all_attribute_metadata.withColumn(
         NAME,
         F.when(
