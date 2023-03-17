@@ -92,6 +92,8 @@ applicationGroups:
           # - this ensures the redirect works with the reserve proxy
           # - it is safe to allow for '*', since the container is only
           #   accessible within the cluster
+          - name: FORWARDED_ALLOW_IPS
+            value: "*"
 
       - name: redis
         image: "{{ .Values.redisImage }}"
