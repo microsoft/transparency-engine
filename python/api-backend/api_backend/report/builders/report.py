@@ -3,19 +3,20 @@
 # Licensed under the MIT license. See LICENSE file in the project.
 #
 
-import os
 import json
+import os
+
 from api_backend.report.constants.report_data_mapping import report_data_mapping
 
-constants_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'constants'))
+constants_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "constants"))
 
 
 def build_report(id, raw_report, entity_details, activity):
     report = {"html_report": {"reportSections": []}}
     sections = []
-    report_template = {} 
+    report_template = {}
     try:
-        with open(os.path.join(constants_folder, 'config.json')) as f:
+        with open(os.path.join(constants_folder, "config.json")) as f:
             report_template = json.load(f)
     except json.JSONDecodeError as e:
         raise ValueError("Invalid JSON syntax in config file") from e

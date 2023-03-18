@@ -7,6 +7,7 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
+
 def get_engine() -> Engine:
     """
     Get a SQLAlchemy engine for the database.

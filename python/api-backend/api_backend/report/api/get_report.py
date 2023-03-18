@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 
 from api_backend.report.api.get_report_from_db import get_report_from_db
 
+
 async def get_report(id: str):
     """
     Asynchronously retrieves a report with the specified entity id.

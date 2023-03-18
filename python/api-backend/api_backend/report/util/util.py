@@ -73,7 +73,7 @@ def build_related_entities_data(report_section: List[RawSection]) -> List[Relate
 
 def get_review_flags(review_flag_details: List[RawReviewFlag]) -> List[ReviewFlag]:
     review_flags: List[ReviewFlag] = []
-
+    for rf in review_flag_details:
         review_flag = ReviewFlag(
             flag=rf.get("flag", ""),
             evidence=rf.get("evidence", ""),
