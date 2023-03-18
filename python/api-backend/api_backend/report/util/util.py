@@ -57,12 +57,12 @@ def build_related_entities_data(report_section: List[RawSection]) -> List[Relate
         entity_id = item["related"]
         if "link_summary" in item:
             relationship_paths = RelationshipPaths(
-                direct_paths=item["link_summary"].get("all_direct_links", []),
+                direct_paths=item["link_summary"].get("direct_links", []),
                 indirect_paths=item["link_summary"].get("indirect_link_count", 0),
             )
         review_flags: List[ReviewFlag] = []
-        if "related_redflag_details" in item:
-            review_flags = get_review_flags(item["related_redflag_details"])
+        if "related_flag_details" in item:
+            review_flags = get_review_flags(item["related_flag_details"])
         data_item = RelatedEntityActivity(
             entity_id=entity_id, relationship_paths=relationship_paths, review_flags=review_flags
         )
@@ -73,10 +73,10 @@ def build_related_entities_data(report_section: List[RawSection]) -> List[Relate
 
 def get_review_flags(review_flag_details: List[RawReviewFlag]) -> List[ReviewFlag]:
     review_flags: List[ReviewFlag] = []
-    for rf in review_flag_details:
+
         review_flag = ReviewFlag(
-            flag=rf.get("description", ""),
-            evidence=rf.get("details", []),
+            flag=rf.get("flag", ""),
+            evidence=rf.get("evidence", ""),
         )
         review_flags.append(review_flag.to_dict())
     return review_flags

@@ -12,39 +12,39 @@ import api_backend.report.builders.review_flag_summary as review_flag_summary
 
 
 report_data_mapping = {
-    "entity_info_details": {
+    "attributesummary": {
         "attribute_counts": {"method": entity_overview.get_attribute_counts, "args": "raw_section"},
         "attribute_values": {"method": entity_overview.get_attribute_values, "args": "entity_details"},
     },
-    "risk_summary_details": {
+    "flagsummary": {
         "attribute_counts": {"method": review_flag_summary.get_attribute_counts, "args": "raw_section"}
     },
-    "activity_summary_details": {
+    "activitysummary": {
         "attribute_counts": {"method": activity_summary.get_attribute_counts, "args": "raw_section"}
     },
-    "own_redflag_details": {
+    "ownflags": {
         "attribute_values": {"method": own_review_flag_analysis.get_attribute_values, "args": "raw_section"}
     },
-    "direct_redflag_details": {
+    "directflags": {
         "attribute_values": {"method": related_entities.get_attribute_values, "args": "raw_section"}
     },
-    "indirect_redflag_details": {
+    "indirectflags": {
         "attribute_values": {"method": related_entities.get_attribute_values, "args": "raw_section"}
     },
-    "sync_entities": {
+    "syncactivity": {
         "attribute_counts": {"method": activity_analysis.get_attribute_counts, "args": "raw_section"},
         "attribute_values": {"method": activity_analysis.get_attribute_values, "args": "raw_section"},
         "attribute_charts": {
             "method": activity_analysis.get_attribute_charts,
-            "args": "filtered_activity_attributes",
+            "args": "activity",
         },
     },
-    "async_entities": {
+    "asyncactivity": {
         "attribute_counts": {"method": activity_analysis.get_attribute_counts, "args": "raw_section"},
         "attribute_values": {"method": activity_analysis.get_attribute_values, "args": "raw_section"},
         "attribute_charts": {
             "method": activity_analysis.get_attribute_charts,
-            "args": "filtered_activity_attributes",
+            "args": "activity",
         },
     },
 }

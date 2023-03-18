@@ -10,7 +10,7 @@ from api_backend.report.constants.report_data_mapping import report_data_mapping
 constants_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'constants'))
 
 
-def build_report(id, raw_report, entity_details, filtered_activity_attributes):
+def build_report(id, raw_report, entity_details, activity):
     report = {"html_report": {"reportSections": []}}
     sections = []
     report_template = {} 
@@ -23,7 +23,7 @@ def build_report(id, raw_report, entity_details, filtered_activity_attributes):
         args = {
             "raw_section": raw_report[key],
             "entity_details": entity_details,
-            "filtered_activity_attributes": filtered_activity_attributes.get(key, None),
+            "activity": activity.get(key, None),
         }
         if key in report_template:
             sections.append(section_builder(id, report_template[key], report_data_mapping.get(key, None), args))

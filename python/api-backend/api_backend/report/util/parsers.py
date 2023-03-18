@@ -11,7 +11,7 @@ from api_backend.report.util.util import title_to_key
 def parse_entity_details(entity_results):
     entity_details = {}
     for row in entity_results:
-        attribute = row[1]
+        attribute = row[0]
         value = row[2]
         values = entity_details.get(attribute, [])
         if value not in values:
@@ -32,20 +32,20 @@ def parse_raw_report(column_names, report_results):
     return raw_report
 
 
-def parse_filtered_activity_attributes(filtered_activity_attributes_results, target_id):
-    filtered_activity_attributes = {}
-    for item in filtered_activity_attributes_results:
-        entity = item[0].split("::")[1]
+def parse_activity(activity_results, target_id):
+    activity = {}
+    for item in activity_results:
+        entity = item[0]
         time = item[1]
         attribute = item[2]
         value = item[3]
-        if entity not in filtered_activity_attributes:
-            filtered_activity_attributes[entity] = {}
-        values = filtered_activity_attributes[entity].get("values", [])
+        if entity not in activity:
+            activity[entity] = {}
+        values = activity[entity].get("values", [])
         values.append({"time": time, "attribute": attribute, "value": value})
-        filtered_activity_attributes[entity]["values"] = values
-        filtered_activity_attributes[entity]["is_target"] = entity == target_id
-    return filtered_activity_attributes
+        activity[entity]["values"] = values
+        activity[entity]["is_target"] = entity == target_id
+    return activity
 
 
 def parse_value(value):

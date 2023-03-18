@@ -3,7 +3,7 @@
     "title": "ENTITY REPORT",
     "intro": "This Transparency Engine report illustrates how risks or opportunities may transfer to an entity of interest via its network of closely related entities. Close relationships between pairs of entities are determined through statistical analysis of shared attributes and activity, while review flags (\"red flag\" risks or \"green flag\" opportunities) are provided as data inputs."
   },
-  "entity_info_details": {
+  "attributesummary": {
     "id": "",
     "title": "Entity overview",
     "intro": "Summary of attributes associated with the target entity in the input data.",
@@ -26,7 +26,7 @@
       }
     }
   },
-  "risk_summary_details": {
+  "flagsummary": {
     "title": "Review flag summary",
     "intro": "Summary of review flags associated with the target entity and its broader network of closely-related entities.",
 
@@ -41,7 +41,7 @@
       }
     }
   },
-  "activity_summary_details": {
+  "activitysummary": {
     "title": "Activity summary",
     "intro": "Summary of activity-based similarities with other entities performing similar actions over time.",
     "attribute_mapping": {
@@ -55,7 +55,7 @@
       }
     }
   },
-  "own_redflag_details": {
+  "ownflags": {
     "title": "Own review flag details",
     "intro": "Details of the review flags associated with the target entity.",
     "attribute_mapping": {
@@ -69,7 +69,7 @@
       }
     }
   },
-  "direct_redflag_details": {
+  "directflags": {
     "title": "Directly-related entities with review flags",
     "intro": "Details of entities that are directly related to the target entity and which are associated with at least one review flag.",
     "attribute_mapping": {
@@ -83,7 +83,7 @@
       }
     }
   },
-  "indirect_redflag_details": {
+  "indirectflags": {
     "title": "Indirectly-related entities with review flags",
     "intro": "The following are entities that are indirectly related to the target entity and carry at least one review flag",
     "attribute_mapping": {
@@ -97,7 +97,7 @@
       }
     }
   },
-  "sync_entities": {
+  "syncactivity": {
     "title": "Entities with synchronous activity similarity",
     "intro": "The following are entities that have similar activity with the target entity (i.e., performing the same actions) in the same periods.",
     "attribute_mapping": {
@@ -127,7 +127,7 @@
       }
     }
   },
-  "async_entities": {
+  "asyncactivity": {
     "title": "Entities with asynchronous activity similarity",
 
     "intro": "The following are entities that have similar activity with the target entity (i.e., performing the same actions) in different periods.",
