@@ -169,7 +169,8 @@
                 "async_attributes": [
                     "buyer",
                     "item"
-                ]
+                ],
+                "entity_name_attribute": "company_name"
             }
         }
     }
