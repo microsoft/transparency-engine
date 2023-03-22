@@ -13,6 +13,9 @@ from typing import Final, List
 from transparency_engine.analysis.scoring.measures import NetworkMeasures
 
 
+# Default entity name attribute
+DEFAULT_ENTITY_NAME_ATTRIBUTE: Final[str] = "default_name"
+
 # Flag summary data keys
 FLAG_SUMMARY_MEASURES: Final[List[NetworkMeasures]] = [
     NetworkMeasures.NETWORK_FLAG_COUNT,

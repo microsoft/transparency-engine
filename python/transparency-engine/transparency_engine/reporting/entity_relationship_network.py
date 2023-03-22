@@ -133,9 +133,7 @@ def report_entity_graph(  # nosec - B107
         SOURCE_NODE, TARGET_NODE, F.explode(PATHS).alias("path")
     )
 
-    graph_data = graph_data.withColumn(
-        "path_edges", get_path_edges_udf(F.col("path"))
-    )
+    graph_data = graph_data.withColumn("path_edges", get_path_edges_udf(F.col("path")))
     graph_data = graph_data.select(
         SOURCE_NODE, TARGET_NODE, F.explode("path_edges").alias("path_edge")
     )
@@ -181,7 +179,7 @@ def report_entity_graph(  # nosec - B107
     ).withColumn(PATH_TARGET_FLAG, F.when(F.col(PATH_TARGET_FLAG) > 0, 1).otherwise(0))
     # map node type column to attribute name rather than attribute id
     __type_mapping_udf = F.udf(
-        lambda type: attribute_name_mapping.get(type, ENTITY_ID), StringType()
+        lambda type: attribute_name_mapping.get(type, type), StringType()
     )
     graph_data = graph_data.withColumn(
         PATH_SOURCE_TYPE, __type_mapping_udf(PATH_SOURCE_TYPE)

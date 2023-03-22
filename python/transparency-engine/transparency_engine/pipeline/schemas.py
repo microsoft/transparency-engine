@@ -9,6 +9,7 @@ from pyspark.sql.types import (
     ArrayType,
     BooleanType,
     FloatType,
+    IntegerType,
     StringType,
     StructField,
     StructType,
@@ -51,6 +52,7 @@ JACCARD_SIMILARITY: Final[str] = "JaccardSimilarity"
 JACCARD_ANOMALY: Final[str] = "JaccardAnomaly"
 OVERLAP_SCORE: Final[str] = "OverlapScore"
 SHARED: Final[str] = "Shared"
+ACTIVITY_ATTRIBUTE_TYPE: Final[str] = "type"
 
 
 # Schemas
@@ -118,5 +120,19 @@ PREDICTED_LINK_SCHEMA: Final[StructType] = StructType(
         StructField(SOURCE_NODE, StringType(), False),
         StructField(TARGET_NODE, StringType(), False),
         StructField(PATHS, ArrayType(ArrayType(StringType())), False),
+    ]
+)
+
+ENTITY_TEMPORAL_ACTIVITY_SCHEMA: Final[StructType] = StructType(
+    [
+        StructField(SOURCE, StringType(), False),
+        StructField(TARGET, StringType(), False),
+        StructField(ACTIVITY_ATTRIBUTE_TYPE, StringType(), False),
+        StructField(TIME_PERIOD, StringType(), False),
+        StructField(SHARED, IntegerType(), False),
+        StructField(f"{SOURCE}_only", IntegerType(), False),
+        StructField(f"{TARGET}_only", IntegerType(), False),
+        StructField(JACCARD_SIMILARITY, FloatType(), False),
+        StructField(OVERLAP_SCORE, FloatType(), False),
     ]
 )

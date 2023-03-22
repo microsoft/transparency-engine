@@ -9,9 +9,11 @@ from typing import Dict, List, Tuple, Union
 
 import pyspark.sql.functions as F
 
-from pyspark.sql import DataFrame
+from dataclasses import dataclass
+from pyspark.sql import DataFrame, Window
 
 import transparency_engine.modules.data_shaper.spark_transform as spark_transform
+
 from transparency_engine.pipeline.schemas import (
     ATTRIBUTE_ID,
     DESCRIPTION,
@@ -19,15 +21,27 @@ from transparency_engine.pipeline.schemas import (
     NAME,
     VALUE,
 )
-from transparency_engine.reporting.report_schemas import ATTRIBUTE_SUMMARY
+from transparency_engine.reporting.report_schemas import (
+    ATTRIBUTE_SUMMARY,
+    DEFAULT_ENTITY_NAME_ATTRIBUTE,
+)
+
+
+@dataclass
+class AttributeReportOutput:
+    entity_attribute_metadata: DataFrame
+    entity_attributes: DataFrame
+    entity_attribute_summary: DataFrame
 
 
 def report_entity_attributes(
     entity_data: DataFrame,
     static_relationship_data: Union[DataFrame, List[DataFrame]],
     other_attribute_data: Union[DataFrame, List[DataFrame]],
+    entity_name_attribute: str,
+    default_entity_name_attribute: str = DEFAULT_ENTITY_NAME_ATTRIBUTE,
     attribute_metadata: Union[DataFrame, None] = None,
-) -> Tuple[DataFrame, DataFrame, DataFrame]:
+) -> AttributeReportOutput:
     """
     Generates 3 output tables to be used for entity search and for populating the
     Entity Overview section of the entity report:
@@ -44,32 +58,49 @@ def report_entity_attributes(
         other_attribute_data: Union[DataFrame, List[DataFrame]]
             List of all other entity attributes that are not used for link prediction
             but can be included for search and reporting.
+        entity_name_attribute: str
+            Name of the static attribute used as the default entity name.
+        default_entity_name_attribute: str, default = "default_name"
+            Name of the default entity name attribute to be added in the output d
         attribute_metadata: DataFrame, default = None
             Dataframe contaiing attribute definition, with schema [AttributeID, Name, Description].
             If None, a default metadata will be created.
 
     Returns:
     -------------
-        Tuple[DataFrame, DataFrame, DataFrame]:
+        AttributeReportOutput:
             Returns the updated attribute metadata, entity attributes, and attribute counts.
     """
+    # aggregate all entity attributes
     all_attribute_metadata, all_entity_attribute_data = __get_entity_attributes(
         entity_data=entity_data,
         static_relationship_data=static_relationship_data,
         other_attribute_data=other_attribute_data,
+        entity_name_attribute=entity_name_attribute,
+        default_entity_name_attribute=default_entity_name_attribute,
         attribute_metadata=attribute_metadata,
     )
+
     attribute_summary_data = __summarize_entity_attributes(
-        entity_data=entity_data, entity_attribute_data=all_entity_attribute_data
+        entity_data=entity_data,
+        entity_attribute_data=all_entity_attribute_data,
+        default_entity_name_attribute=default_entity_name_attribute,
     )
 
-    return (all_attribute_metadata, all_entity_attribute_data, attribute_summary_data)
+    output = AttributeReportOutput(
+        entity_attribute_metadata=all_attribute_metadata,
+        entity_attributes=all_entity_attribute_data,
+        entity_attribute_summary=attribute_summary_data,
+    )
+    return output
 
 
 def __get_entity_attributes(
     entity_data: DataFrame,
     static_relationship_data: Union[DataFrame, List[DataFrame]],
     other_attribute_data: Union[DataFrame, List[DataFrame]],
+    entity_name_attribute: str,
+    default_entity_name_attribute: str = DEFAULT_ENTITY_NAME_ATTRIBUTE,
     attribute_metadata: Union[DataFrame, None] = None,
 ) -> Tuple[DataFrame, DataFrame]:
     """
@@ -86,6 +117,10 @@ def __get_entity_attributes(
         other_attribute_data: Union[DataFrame, List[DataFrame]]
             List of other entity attributes that are not used for link prediction
             but can be included for search and reporting.
+        entity_name_attribute: str
+            Name of the static attribute used as the default entity name.
+        default_entity_name_attribute: str, default = "default_name"
+            Name of the default entity name attribute to be added in the output dataframe.
         attribute_metadata: DataFrame, default = None
             Dataframe contaiing attribute definition, with schema [AttributeID, Name, Description]
 
@@ -94,6 +129,7 @@ def __get_entity_attributes(
         Tuple[DataFrame, DataFrame]:
             Returns the updated attribute metadata and a dataframe containing entity static attributes.
     """
+    # aggregate all static attributes
     if not isinstance(static_relationship_data, List):
         static_relationship_data = [static_relationship_data]
     if not isinstance(other_attribute_data, List):
@@ -108,6 +144,13 @@ def __get_entity_attributes(
         )
     )
     all_attribute_data = reduce(DataFrame.unionAll, attribute_data_list)
+
+    # add default entity name attribute
+    all_attribute_data = __add_default_entity_name(
+        entity_attribute_data=all_attribute_data,
+        entity_name_attribute=entity_name_attribute,
+        default_entity_name_attribute=default_entity_name_attribute,
+    )
 
     # update attribute metadata
     if attribute_metadata is None:
@@ -134,8 +177,9 @@ def __get_entity_attributes(
     all_attribute_metadata = all_attribute_metadata.withColumn(
         NAME,
         F.when(
-            (F.col(NAME).isNull()) | (F.trim(F.col(NAME)) == ""),
-            F.col(ATTRIBUTE_ID)).otherwise(F.col(NAME)))
+            (F.col(NAME).isNull()) | (F.trim(F.col(NAME)) == ""), F.col(ATTRIBUTE_ID)
+        ).otherwise(F.col(NAME)),
+    )
 
     # join the updated attribute metadata with the attribute table
     all_attribute_data = all_attribute_data.join(
@@ -144,8 +188,51 @@ def __get_entity_attributes(
     return (all_attribute_metadata, all_attribute_data)
 
 
+def __add_default_entity_name(
+    entity_attribute_data: DataFrame,
+    entity_name_attribute: str,
+    default_entity_name_attribute: str = DEFAULT_ENTITY_NAME_ATTRIBUTE,
+) -> DataFrame:
+    """
+    Add a default entity name attribute to the entity attribute table
+    to enable the frontend to display a single entity name in the entity search/summary table.
+
+    Params:
+        entity_attribute_data: DataFrame
+            Dataframe containing all entity attributes collected from the static relationship tables and the Entity table
+        entity_name_attribute: str
+            Name of the static attribute used as the default entity name.
+        default_entity_name_attribute: str
+            Name of the default entity name attribute to be added in the output dataframe.
+
+    Return:
+        DataFrame: Updated entity attribute table with the added default name attribute.
+    """
+    entity_name_data = (
+        entity_attribute_data.filter(F.col(ATTRIBUTE_ID) == entity_name_attribute)
+        .drop(entity_name_attribute)
+        .cache()
+    )
+    if entity_name_data.count() > 0:
+        window_spec = Window.partitionBy(ENTITY_ID).orderBy(VALUE)
+        entity_name_data = entity_name_data.withColumn(
+            "name_rank", F.row_number().over(window_spec)
+        )
+        entity_name_data = entity_name_data.filter(F.col("name_rank") == 1)
+        entity_name_data = entity_name_data.withColumn(
+            ATTRIBUTE_ID, F.lit(default_entity_name_attribute)
+        )
+        entity_name_data = entity_name_data.select(ENTITY_ID, ATTRIBUTE_ID, VALUE)
+        updated_attribute_dta = entity_attribute_data.union(entity_name_data)
+        return updated_attribute_dta
+    else:
+        return entity_attribute_data
+
+
 def __summarize_entity_attributes(
-    entity_data: DataFrame, entity_attribute_data: DataFrame
+    entity_data: DataFrame,
+    entity_attribute_data: DataFrame,
+    default_entity_name_attribute: str = DEFAULT_ENTITY_NAME_ATTRIBUTE,
 ) -> DataFrame:
     """
     Compute count for each attribute in the entity attribute table,
@@ -158,7 +245,9 @@ def __summarize_entity_attributes(
             may also contain other attributes that are not used for entity relationship linking,
             but can be included in the final entity report
         entity_attribute_data: DataFrame
-            Dataframe containing all entity attributes collected from the static relationship tables and the Entity table
+            Dataframe containing aggregated entity attributes collected from the static relationship tables and the Entity table
+        default_entity_name_attribute: str
+            Name of the default entity name attribute in the aggregated entity attribute table.
         attribute_metadata: DataFrame
             Dataframe contaiing attribute definition, with schema [AttributeID, Name, Description]
 
@@ -170,6 +259,7 @@ def __summarize_entity_attributes(
     excluded_attributes = [
         column for column in entity_data.columns if column != ENTITY_ID
     ]
+    excluded_attributes.append(default_entity_name_attribute)
     summary_data = entity_attribute_data.groupby([ENTITY_ID, ATTRIBUTE_ID, NAME]).agg(
         F.countDistinct(VALUE).alias("count")
     )

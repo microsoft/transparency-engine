@@ -13,6 +13,7 @@ from pyspark.sql import DataFrame
 import transparency_engine.analysis.scoring.entity_scoring as entity_scoring
 import transparency_engine.analysis.scoring.network_scoring as network_scoring
 import transparency_engine.pipeline.schemas as schemas
+import transparency_engine.reporting.entity_report as entity_report
 
 from transparency_engine.analysis.link_filtering.graph.dynamic_individual_link_filtering import (
     DynamicIndividualLinkFilter,
@@ -53,7 +54,6 @@ from transparency_engine.preprocessing.text.lsh_fuzzy_matching import (
     LSHConfig,
     LSHFuzzyMatchTransformer,
 )
-import transparency_engine.reporting.entity_report as entity_report
 from transparency_engine.typing import InputLoadTypes, PipelineSteps
 
 
@@ -302,7 +302,7 @@ class TransparencyPipeline:
             f"{scoring_step.get('entity_flag', '')}_prep"
         )
         flag_metadata_df = self.data_handler.load_data(
-            scoring_step.get('flag_metadata', '')
+            scoring_step.get("flag_metadata", "")
         )
         predicted_links_df = self.data_handler.load_data(
             f"{scoring_step.get('predicted_links', '')}_filtered_links"
@@ -311,13 +311,13 @@ class TransparencyPipeline:
         entity_score_df = entity_scoring.compute_entity_score(
             entity_data_df, entity_flag_df, flag_metadata_df
         ).cache()
-        logger.info(f'Finished computing entity score: {entity_score_df.count()}')
+        logger.info(f"Finished computing entity score: {entity_score_df.count()}")
         entity_score_df.show(5)
 
         network_score_df = network_scoring.compute_network_score(
             entity_score_df, predicted_links_df
         )
-        logger.info(F'Finished computing network score')
+        logger.info(f"Finished computing network score")
         network_score_df.show(5)
 
         self.data_handler.write_data(entity_score_df, "entity_scoring")
@@ -349,7 +349,9 @@ class TransparencyPipeline:
             for input in report_step.get("other", [])
         ]
 
-        entity_flag_df = self.data_handler.load_data(f"{report_step.get('entity_flag', '')}_prep")
+        entity_flag_df = self.data_handler.load_data(
+            f"{report_step.get('entity_flag', '')}_prep"
+        )
         network_score_df = self.data_handler.load_data("network_scoring")
         predicted_links_df = self.data_handler.load_data(
             f"{report_step.get('predicted_links', '')}_filtered_links"
@@ -358,15 +360,20 @@ class TransparencyPipeline:
             report_step.get("flag_metadata", "")
         )
         attribute_metadata_df = self.data_handler.load_data(
-            f"{report_step.get('attribute_metadata', '')}_prep")
+            f"{report_step.get('attribute_metadata', '')}_prep"
+        )
 
         sync_attributes = report_step.get("config", {}).get("sync_attributes", [])
         async_attributes = report_step.get("config", {}).get("async_attributes", [])
+        entity_name_attribute = report_step.get("config", {}).get(
+            "entity_name_attribute", []
+        )
 
         # Run the report
         config = entity_report.ReportConfig(
             sync_link_attributes=sync_attributes,
             async_link_attributes=async_attributes,
+            entity_name_attribute=entity_name_attribute,
         )
 
         report_output = entity_report.generate_report(
@@ -380,13 +387,28 @@ class TransparencyPipeline:
             flag_metadata=flag_metadata_df,
             attribute_metadata=attribute_metadata_df,
             configs=config,
+            entity_name_attribute=entity_name_attribute,
         )
 
         self.data_handler.write_data(
-            report_output.entity_activity, "entity_activity_report"
+            report_output.entity_activity_report.entity_activity,
+            "entity_activity_report",
         )
         self.data_handler.write_data(
-            report_output.entity_attributes, "entity_attributes_report"
+            report_output.entity_activity_report.entity_activity_summary_scores,
+            "entity_temporal_activity_report",
+        )
+        self.data_handler.write_data(
+            report_output.entity_activity_report.entity_link_temporal_scores,
+            "entity_related_activity_report",
+        )
+        self.data_handler.write_data(
+            report_output.entity_activity_report.entity_link_summary_scores,
+            "entity_activity_link_report",
+        )
+        self.data_handler.write_data(
+            report_output.entity_attribute_report.entity_attributes,
+            "entity_attributes_report",
         )
         self.data_handler.write_data(report_output.entity_graph, "entity_graph_report")
         self.data_handler.write_data(report_output.html_report, "html_report")
