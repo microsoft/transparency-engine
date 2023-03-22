@@ -45,21 +45,16 @@ DEFAULT_NETWORK_SCORE_CONFIGS: ScoringConfig = ScoringConfig(
     selected_measures=[
         MeasureConfig(
             NetworkMeasures.TARGET_ENTITY_SCORE,
-            weight=1.0,
-            normalization=NormalizationTypes.BY_MAX_VALUE,
-        ),
-        MeasureConfig(
-            NetworkMeasures.TARGET_FLAG_DEGREE,
-            weight=1.0,
+            weight=0.5,
             normalization=NormalizationTypes.BY_MAX_VALUE,
         ),
         MeasureConfig(
             NetworkMeasures.RELATED_ENTITY_SCORE,
-            weight=1.0,
+            weight=0.5,
             normalization=NormalizationTypes.BY_MAX_VALUE,
         ),
     ],
-    scoring_function=ArithmeticOperators.MULTIPLICATION,
+    scoring_function=ArithmeticOperators.SUM,
 )
 
 
@@ -127,7 +122,7 @@ def compute_network_score(  # nosec - B107
         .select(SOURCE_NODE, TARGET_NODE)
         .dropDuplicates()
     )
-   
+
     direct_measure_data = __compute_related_entity_measures(
         entity_score_data=entity_score_data,
         related_entity_data=direct_link_data,
@@ -151,7 +146,7 @@ def compute_network_score(  # nosec - B107
     network_measure_data = network_measure_data.join(
         indirect_measure_data, on=ENTITY_ID, how="left"
     )
-    
+
     # get related entity measures
     network_measure_data = network_measure_data.fillna(0)
     network_measure_data = network_measure_data.withColumn(
@@ -189,7 +184,7 @@ def compute_network_score(  # nosec - B107
         F.col(NetworkMeasures.DIRECT_ENTITY_SCORE)
         + F.col(NetworkMeasures.INDIRECT_ENTITY_SCORE),
     )
-    
+
     # get network measures
     network_measure_data = network_measure_data.withColumn(
         NetworkMeasures.NETWORK_ENTITY_COUNT,
@@ -234,14 +229,18 @@ def compute_network_score(  # nosec - B107
             logger.info(f"Normalizing by max scale: {measure.name}")
             scaled_output_col = f"{measure.name}_{NormalizationTypes.BY_MAX_VALUE}"
             network_measure_data = normalize_max_scale(
-                df=network_measure_data, input_col=measure.name, output_col=scaled_output_col
+                df=network_measure_data,
+                input_col=measure.name,
+                output_col=scaled_output_col,
             )
             measure_cols.append(scaled_output_col)
         else:
             logger.info(f"Normalizing by rank scale: {measure.name}")
             scaled_output_col = f"{measure.name}_{NormalizationTypes.BY_RANK_VALUE}"
             network_measure_data = normalize_rank(
-                df=network_measure_data, input_col=measure.name, output_col=scaled_output_col
+                df=network_measure_data,
+                input_col=measure.name,
+                output_col=scaled_output_col,
             )
             measure_cols.append(scaled_output_col)
 
@@ -258,16 +257,18 @@ def compute_network_score(  # nosec - B107
     network_measure_data = network_measure_data.withColumn(
         ScoringTypes.FINAL_NETWORK_SCORE, __network_score_udf("all_measures")
     )
-    logger.info(f'Finished computing raw final network score')
+    logger.info(f"Finished computing raw final network score")
 
     # normalize the final network score
     scaled_score_col = (
         f"{ScoringTypes.FINAL_NETWORK_SCORE}_{NormalizationTypes.BY_MAX_VALUE}"
     )
     network_measure_data = normalize_max_scale(
-        df=network_measure_data, input_col=ScoringTypes.FINAL_NETWORK_SCORE, output_col=scaled_score_col
+        df=network_measure_data,
+        input_col=ScoringTypes.FINAL_NETWORK_SCORE,
+        output_col=scaled_score_col,
     )
-    
+
     return network_measure_data
 
 
@@ -398,7 +399,9 @@ def __compute_flag_degree(  # nosec - B107
     flagged_link_data = flagged_link_data.selectExpr(
         f"{SOURCE_NODE} AS {ENTITY_ID}", PATHS
     )
-    flagged_link_data = flagged_link_data.groupby(ENTITY_ID).agg(F.collect_list(PATHS).alias(PATHS))
+    flagged_link_data = flagged_link_data.groupby(ENTITY_ID).agg(
+        F.collect_list(PATHS).alias(PATHS)
+    )
 
     # compute flag degree measures
     flagged_link_data = flagged_link_data.withColumn(
@@ -461,8 +464,8 @@ def __flag_degree_udf(  # nosec - B107
 
     """
     attributes = set()
-    paths = chain.from_iterable(paths)
-    for path in paths:
+    flatten_paths = chain.from_iterable(paths)
+    for path in flatten_paths:
         # entity will either be the first or last node of the path
         if path[0].split(attribute_join_token)[1] == entity and len(path) > 1:
             attributes.add(path[1])
@@ -491,8 +494,8 @@ def __flag_degree_type_udf(  # nosec - B107
 
     """
     attribute_types = set()
-    paths = chain.from_iterable(paths)
-    for path in paths:
+    flatten_paths = chain.from_iterable(paths)
+    for path in flatten_paths:
         # entity will either be at the first or last node of the path
         if path[0].split(attribute_join_token)[1] == entity and len(path) > 1:
             attribute_types.add(path[1].split(attribute_join_token)[0])
