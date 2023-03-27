@@ -403,7 +403,11 @@ class TransparencyPipeline:
             "entity_related_activity_report",
         )
         self.data_handler.write_data(
-            report_output.entity_activity_report.entity_link_summary_scores,
+            report_output.entity_activity_report.entity_link_overall_scores,
+            "entity_related_activity_overall_report",
+        )
+        self.data_handler.write_data(
+            report_output.entity_activity_report.entity_link_counts,
             "entity_activity_link_report",
         )
         self.data_handler.write_data(

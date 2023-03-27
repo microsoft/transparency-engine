@@ -136,3 +136,16 @@ ENTITY_TEMPORAL_ACTIVITY_SCHEMA: Final[StructType] = StructType(
         StructField(OVERLAP_SCORE, FloatType(), False),
     ]
 )
+
+ENTITY_OVERALL_ACTIVITY_SCHEMA: Final[StructType] = StructType(
+    [
+        StructField(SOURCE, StringType(), False),
+        StructField(TARGET, StringType(), False),
+        StructField(ACTIVITY_ATTRIBUTE_TYPE, StringType(), False),
+        StructField(SHARED, IntegerType(), False),
+        StructField(f"{SOURCE}_only", IntegerType(), False),
+        StructField(f"{TARGET}_only", IntegerType(), False),
+        StructField(JACCARD_SIMILARITY, FloatType(), False),
+        StructField(OVERLAP_SCORE, FloatType(), False),
+    ]
+)

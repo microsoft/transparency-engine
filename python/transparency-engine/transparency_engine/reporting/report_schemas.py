@@ -16,6 +16,11 @@ from transparency_engine.analysis.scoring.measures import NetworkMeasures
 # Default entity name attribute
 DEFAULT_ENTITY_NAME_ATTRIBUTE: Final[str] = "default_name"
 
+# activity link type values (to be used in PowerBI report)
+LINK_TYPE: Final[str] = "link_type"
+SYNC_ACTIVITY_LINK_TYPE: Final[str] = "sync_activity"
+ASYNC_ACTIVITY_LINK_TYPE: Final[str] = "async_activity"
+
 # Flag summary data keys
 FLAG_SUMMARY_MEASURES: Final[List[NetworkMeasures]] = [
     NetworkMeasures.NETWORK_FLAG_COUNT,

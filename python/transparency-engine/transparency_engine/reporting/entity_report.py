@@ -143,8 +143,9 @@ def generate_report(  # nosec - B107
         attribute_name_mapping=attribute_name_mapping,
         include_flagged_links_only=configs.include_flagged_links_only,
         attribute_join_token=attribute_join_token,
-    )
-    logger.info("Finished generating entity graph report")
+    ).cache()
+    logger.info(f"Finished generating entity graph report: {entity_graph_data.count()}")
+    entity_graph_data.show(5)
 
     # generate flag data
     flag_data = report_flags(
@@ -156,8 +157,8 @@ def generate_report(  # nosec - B107
         min_percent=configs.min_percent,
         attribute_join_token=attribute_join_token,
         edge_join_token=edge_join_token,
-    )
-    logger.info("Finished generating entity flag report")
+    ).cache()
+    logger.info(f"Finished generating entity flag report: {flag_data.count()}")
 
     # generate activity data
     dynamic_attribute_report = report_activities(
@@ -175,14 +176,17 @@ def generate_report(  # nosec - B107
     logger.info("Finished generating entity acitity report")
 
     # generate html report data
-    html_report_data = static_attribute_report.entity_attribute_summary.join(
+    static_attribute_summary = static_attribute_report.entity_attribute_summary
+    dynamic_attribute_summary = dynamic_attribute_report.entity_link_all_scores
+    static_attribute_summary.show(5)
+    dynamic_attribute_summary.show(5)
+    html_report_data = (static_attribute_summary.join(
         flag_data, on=ENTITY_ID, how="left"
-    )
-    html_report_data = html_report_data.join(
-        dynamic_attribute_report.entity_link_all_scores, on=ENTITY_ID, how="left"
-    )
+    )).join(
+        dynamic_attribute_summary, on=ENTITY_ID, how="left"
+    ).cache()
+    logger.info(f"Finished generating html report: {html_report_data.count()}")
     html_report_data.show(5)
-    logger.info(f"Finished generating html report")
 
     report_output = ReportOutput(
         entity_attribute_report=static_attribute_report,
