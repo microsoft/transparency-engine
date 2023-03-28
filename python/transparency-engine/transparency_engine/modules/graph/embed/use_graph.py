@@ -441,15 +441,15 @@ class UnfoldedGraph(BaseGraph[UnfoldedGraphNode]):
             return reweighted_graph
 
     def __subgraph(
-        self, row_indices: List[int], column_indices: List[int], inplace: bool = False
+        self, row_indices: np.ndarray, column_indices: np.ndarray, inplace: bool = False
     ) -> "UnfoldedGraph":
         """
         Return a subgraph of the current graph based on the given indices
 
         Parameters
         ----------
-            idx0 : List[int] The indices of the first partition
-            idx1 : List[int] The indices of the second partition
+            idx0 : np.ndarray The indices of the first partition
+            idx1 : np.ndarray The indices of the second partition
             inplace : bool Whether to return a new graph or modify the current graph
 
         Returns

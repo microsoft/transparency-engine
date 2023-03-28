@@ -560,10 +560,33 @@ def summarize_link_scores(
     activity_attribute: str = schemas.TARGET,
     activity_attribute_type: str = schemas.TARGET_TYPE,
     activity_time: str = schemas.TIME_PERIOD,
-):
+) -> Tuple[DataFrame, DataFrame]:
     """
-    Generate scores needed to sumamrize a sync or async links, including
+    Generate scores needed to summarize a sync or async links, including
     jaccard scores of shared activity and jaccard score on shared periods.
+
+    Params:
+        predicted_links: Spark DataFrame
+            DataFrame containing the sync/async activity links, with schemas [Source, Target, Paths]
+        activity_data: Spark DataFrame
+            Dataframe containing the raw activity attributes, with schema [Source, Target, SourceType, TargetType, TimePeriod]
+        source_entity: str
+            Name of the source entity column in the predicted links dataframe
+        target_entity: str
+            Name of the target entity column in the predicted links dataframe
+        activity_entity: str
+            Name of the entity column in the activity dataframe
+        activity_attribute: str
+            Name of the activity attribute column in the activity dataframe
+        activity_time: str
+            Name of the activity time period column in the activity_dataframe
+
+    Returns:
+    --------
+        Spark DataFrame
+            DataFrame containing the overall activity summary scores for each activity link
+        Spark DataFrame
+            DataFrame containing the temporal activity scores for each activity link
     """
     # take half of the links
     input_links = mirror_links(predicted_links, source_entity, target_entity)
@@ -581,7 +604,7 @@ def summarize_link_scores(
         activity_attribute=activity_attribute,
     )
 
-    # compute temporal (v)
+    # compute temporal scores
     temporal_scores = compute_all_period_overlap_score(
         predicted_links=input_links,
         activity_data=selected_activity_data,
@@ -591,35 +614,50 @@ def summarize_link_scores(
         activity_attribute=activity_attribute,
         activity_time=activity_time,
     )
-
+    
     # compute period scores
     period_scores = compute_all_active_period_summary(temporal_scores)
-    period_scores = period_scores.select(schemas.SOURCE, schemas.TARGET, 'type', 'period_jaccard_score').cache()
-    logger.info(f"Finished calculating period scores: {period_scores.count()}")
+    period_scores = period_scores.select(
+        schemas.SOURCE, schemas.TARGET, "type", "period_jaccard_score"
+    )
     
     scores = overall_scores.join(
         period_scores,
         on=[schemas.SOURCE, schemas.TARGET, "type"],
         how="inner",
-    )
-    return scores
+    ).cache()
+    logger.info(f'scores count: {scores.count()}')
+    return (scores, temporal_scores)
 
 
 def get_link_score_summary(scores: DataFrame, attributes: List[str]):
     """
     Flatten the final scores table to be used as input for the reporting function.
+
+    Params:
+        scores: DataFrame
+            Dataframe with schema [Source, Target, Type, Shared, Source_only, Target_only, JaccardSimilarity, OverlapScore]
+        attributes: List[str]
+            List of attribute types to summarize
+
+    Returns:
+        flatten_scores: DataFrame:
+            Flatten dataframe where each column contains the jaccard similarity score for an attribute type.
     """
-    flatten_scores = scores.filter(F.col("type") == "overall").selectExpr(
+
+    period_scores = scores.filter(F.col("type") == "overall").selectExpr(
         schemas.SOURCE, schemas.TARGET, "period_jaccard_score AS period_score"
     )
+    
+    attribute_scores = scores.filter(F.col("type").isin(attributes))
+    attribute_scores = attribute_scores.groupby([schemas.SOURCE, schemas.TARGET])\
+                                       .pivot('type').sum('JaccardSimilarity')
     for attribute in attributes:
-        att_scores = scores.filter(F.col("type") == attribute).selectExpr(
-            schemas.SOURCE, schemas.TARGET, f"JaccardSimilarity AS {attribute}_score"
-        )
-        flatten_scores = flatten_scores.join(
-            att_scores, on=[schemas.SOURCE, schemas.TARGET], how="inner"
-        )
-    flatten_scores = flatten_scores.withColumn(
+        attribute_scores = attribute_scores.withColumnRenamed(attribute, f"{attribute}_score")
+    attribute_scores = attribute_scores.withColumn(
         "average_score", mean_list_udf(F.array(*[f"{att}_score" for att in attributes]))
     )
+    flatten_scores = period_scores.join(attribute_scores, on=[schemas.SOURCE, schemas.TARGET], how='inner')
+    logger.info("Finished calculating link score summary")
     return flatten_scores
+

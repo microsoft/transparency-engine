@@ -2,7 +2,7 @@
 
 Transparency Engine aims to detect and communicate the implicit structure of complex activities in real-world problem areas, in ways that support both situational awareness and targeted action. A potential application is to identify and counter adversarial activities (e.g., corruption) hidden within large-scale datasets.
 
-Given a collection of streaming data sources describing the attributes and actions of real-world entities, it uses a range of graph modeling, joint graph embedding, and other statistical techniques to detect and explain the networks of entities most closely related to each entity. 
+Given a collection of streaming data sources describing the attributes and actions of real-world entities, it uses a range of graph modeling, joint graph embedding [[1-3]](#references), and other statistical techniques to detect and explain the networks of entities most closely related to each entity. 
 
 To prioritize the expert review of these entity networks, entities can be linked to "review flags" that indicate the need for inspection. Review flags may be signs of either opportunities ("green flags") or risks ("red flags") thought to transfer between closely-related entities. The more review flags in an entity network, the higher the priority of that network for review.
 
@@ -64,6 +64,13 @@ yarn build
 yarn start # run the webapp locally
 ```
 The webapp will be available at http://localhost:3000
+
+## References
+1. Alexander Modell, Ian Gallagher, Joshua Cape, and Patrick Rubin-Delanchy. "Spectral embedding and the latent geometry of multipartite networks." arXiv preprint arXiv:2202.03945 (2022).
+
+2. Nick Whiteley, Annie Gray, and Patrick Rubin-Delanchy. "Matrix factorisation and the interpretation of geodesic distance." Advances in Neural Information Processing Systems 34 (2021): 24-38.
+
+3. Ian Gallagher, Andrew Jones, and Patrick Rubin-Delanchy. "Spectral embedding for dynamic networks with stability guarantees." Advances in Neural Information Processing Systems 34 (2021): 10158-10170.
 
 
 ## Contributing
