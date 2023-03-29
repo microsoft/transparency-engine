@@ -6,6 +6,7 @@
 from fastapi import APIRouter
 
 from api_backend.report.api.get_report import get_report
+from api_backend.report.api.get_report_score import get_report_score
 from api_backend.report.api.get_report_url import get_report_url
 
 report_router = APIRouter()
@@ -14,6 +15,11 @@ report_router = APIRouter()
 @report_router.get("/health")
 async def main():
     return {"message": "report api is healthy"}
+
+
+@report_router.get("/score/{id}")
+async def report_score(id):
+    return await get_report_score(id)
 
 
 @report_router.get("/url/{id}")
