@@ -1,0 +1,71 @@
+parameters:
+  name: ""
+  subscription: ""
+  containerRegistry: ""
+
+jobs:
+  - job: ${{ parameters.name }}
+    steps:
+      #
+      # Install Tooling
+      #
+      - task: NodeTool@0
+        displayName: Install Node
+        inputs:
+          versionSpec: $(NODE_VERSION)
+
+      #
+      # Restore Caches
+      #
+      - task: Cache@2
+        displayName: Cache Yarn cache
+        inputs:
+          key: '"yarn" | "$(Agent.OS)" | yarn.lock'
+          restoreKeys: |
+            yarn | "$(Agent.OS)"
+            yarn
+          path: $(YARN_CACHE_FOLDER)
+
+      #
+      # Install Dependencies
+      #
+      - task: Bash@3
+        displayName: Install Node Dependencies
+        env:
+          CI: true
+        inputs:
+          targetType: "inline"
+          script: yarn install --immutable
+
+      #
+      # Bundle Applications
+      #
+      - task: Bash@3
+        displayName: Bundle Webapp
+        env:
+          CI: true
+        inputs:
+          targetType: "inline"
+          script: yarn bundle
+
+      #
+      # Build Frontend Images
+      #
+      - task: Docker@1
+        displayName: "Build frontend image"
+        inputs:
+          azureSubscriptionEndpoint: "${{ parameters.subscription }}"
+          azureContainerRegistry: "${{ parameters.containerRegistry }}"
+          dockerFile: javascript/webapp/Dockerfile
+          imageName: "frontend:$(Build.BuildId)"
+          includeLatestTag: true
+      #
+      # Push Frontend Images
+      #
+      - task: Docker@1
+        displayName: "Push shell frontend image"
+        inputs:
+          azureSubscriptionEndpoint: "${{ parameters.subscription }}"
+          azureContainerRegistry: "${{ parameters.containerRegistry }}"
+          command: "Push an image"
+          imageName: frontend:latest
