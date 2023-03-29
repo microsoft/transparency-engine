@@ -105,7 +105,7 @@ def generate_graph_specs(graph_df: pd.DataFrame):
                 "name": row.PathSource,
                 "type": row.PathSourceType,
                 "relationship": row.PathSourceRelationship,
-                "flag": row.PathSourceFlag
+                "flag": row.PathSourceFlag,
             }
 
         if row.PathTarget not in node_dict:
@@ -114,13 +114,10 @@ def generate_graph_specs(graph_df: pd.DataFrame):
                 "name": row.PathTarget,
                 "type": row.PathTargetType,
                 "relationship": row.PathTargetRelationship,
-                "flag": row.PathTargetFlag
-
+                "flag": row.PathTargetFlag,
             }
         # add edge
-        edge_list.append(
-            {"source": int(row.PathSourceId), "target": int(row.PathTargetId)}
-        )
+        edge_list.append({"source": int(row.PathSourceId), "target": int(row.PathTargetId)})
 
     graph_spec = {"nodes": [node_dict[node] for node in node_dict], "edges": edge_list}
     return graph_spec
