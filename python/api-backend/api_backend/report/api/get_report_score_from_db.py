@@ -18,11 +18,11 @@ def get_report_score_from_db(entity_id):
     conn = engine.connect()
     result_proxy = conn.execute(query)
     result = result_proxy.fetchone()
-    column_names = result_proxy.keys()
+    column_names = [col for col in result_proxy.keys()]
     conn.close()
-    response = {}
 
-    for i, column_name in enumerate(column_names):
-        response[column_name] = parse_value(result[i])
-
-    return response
+    if "final_network_score_max_scaled" in column_names:
+        i = column_names.index("final_network_score_max_scaled")
+        score = result[i]
+        return {"score": score}
+    return None
