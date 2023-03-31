@@ -36,9 +36,9 @@ def parse_activity(activity_results, target_id):
     activity = {}
     for item in activity_results:
         entity = item[0]
-        time = item[1]
-        attribute = item[2]
-        value = item[3]
+        attribute = item[1]
+        value = item[2]
+        time = item[3]
         if entity not in activity:
             activity[entity] = {}
         values = activity[entity].get("values", [])
