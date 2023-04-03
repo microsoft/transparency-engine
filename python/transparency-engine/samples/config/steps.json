@@ -170,7 +170,8 @@
                     "buyer",
                     "item"
                 ],
-                "entity_name_attribute": "company_name"
+                "entity_name_attribute": "company_name",
+                "base_url": "http://localhost:3000/report/"
             }
         }
     }

@@ -399,7 +399,7 @@ def compute_all_period_overlap_score(
         activity_time=activity_time,
         activity_type=activity_type,
     )
-    
+
     scores_df = scores_df.selectExpr(
         f"{source_entity} as {schemas.SOURCE}",
         f"{target_entity} as {schemas.TARGET}",
@@ -459,9 +459,7 @@ def compute_active_period_summary_by_type(
         Spark DataFrame
             Active period summary for the given activity type. Output data schema [source, target, type, source_periods, target_periods, shared_periods]
     """
-    overlap_scores = temporal_overlap_scores.filter(
-        F.col("type") == activity_type
-    )
+    overlap_scores = temporal_overlap_scores.filter(F.col("type") == activity_type)
 
     # calculate source active periods
     source_periods = overlap_scores.filter(

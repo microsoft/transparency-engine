@@ -3,7 +3,7 @@
 # Licensed under the MIT license. See LICENSE file in the project.
 #
 
-from typing import Final, List, Dict
+from typing import Dict, Final, List
 
 import pyspark.sql.functions as F
 
@@ -235,7 +235,7 @@ def generate_procurement_data(
     config: DataGeneratorConfig = procurement_configs,
     n_entities: int = 1000,
     n_communities: int = 20,
-    n_periods: int = 20,  
+    n_periods: int = 20,
 ) -> Dict[str, DataFrame]:
     """
     Gerenerate synthetic data for the public procurement use case.
@@ -271,8 +271,6 @@ def generate_procurement_data(
         DYNAMIC_ATTRIBUTE_TABLE: data.dynamic_attributes,
         FLAG_TABLE: data.flags,
         FLAG_METADATA_TABLE: data.flag_metadata,
-        ATTRIBUTE_METADATA_TABLE: data.attribute_metadata
+        ATTRIBUTE_METADATA_TABLE: data.attribute_metadata,
     }
     return data_dict
-
-

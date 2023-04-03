@@ -22,7 +22,10 @@ from pyspark.sql import SparkSession
 config = SparkConf().setAll([("spark.executor.allowSparkContext", "true")])
 
 spark: SparkSession = (
-    SparkSession.builder.appName('Transparency Engine').enableHiveSupport().config(conf=config).getOrCreate()
+    SparkSession.builder.appName("Transparency Engine")
+    .enableHiveSupport()
+    .config(conf=config)
+    .getOrCreate()
 )
 
 sc: SparkContext = spark.sparkContext
