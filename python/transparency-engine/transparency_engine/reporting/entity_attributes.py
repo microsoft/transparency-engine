@@ -61,7 +61,7 @@ def report_entity_attributes(
         entity_name_attribute: str
             Name of the static attribute used as the default entity name.
         default_entity_name_attribute: str, default = "default_name"
-            Name of the default entity name attribute to be added in the output d
+            Name of the default entity name attribute to be added in the output dataframe
         attribute_metadata: DataFrame, default = None
             Dataframe contaiing attribute definition, with schema [AttributeID, Name, Description].
             If None, a default metadata will be created.

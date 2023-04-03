@@ -87,7 +87,7 @@ def report_activities(  # nosec - B107
     link_all_scores = link_summary_data.select(
         schemas.ENTITY_ID, report_schemas.ACTIVITY_SUMMARY
     )
-    
+
     if not isinstance(dynamic_relationship_data, List):
         activity_data = dynamic_relationship_data
     else:
@@ -95,7 +95,7 @@ def report_activities(  # nosec - B107
 
     # summarize counts of entity's activity details for each period
     entity_activity_count_data = summarize_temporal_activities(activity_data)
-    
+
     # calculate sync and async link scores
     temporal_score_list = []
     overall_score_list = []
@@ -103,7 +103,11 @@ def report_activities(  # nosec - B107
         F.col(schemas.DYNAMIC_LINK_TYPE) == 1
     ).select(schemas.SOURCE, schemas.TARGET, schemas.PATHS)
     if sync_link_data.count() > 0:
-        sync_summary_data, sync_temporal_scores, sync_overall_scores = _summary_related_entities(
+        (
+            sync_summary_data,
+            sync_temporal_scores,
+            sync_overall_scores,
+        ) = _summary_related_entities(
             dynamic_link_data=sync_link_data,
             activity_data=activity_data,
             link_attributes=sync_link_attributes,
@@ -129,7 +133,11 @@ def report_activities(  # nosec - B107
         F.col(schemas.DYNAMIC_LINK_TYPE) == 2
     ).select(schemas.SOURCE, schemas.TARGET, schemas.PATHS)
     if async_link_data.count() > 0:
-        async_summary_data, async_temporal_scores, async_overall_scores = _summary_related_entities(
+        (
+            async_summary_data,
+            async_temporal_scores,
+            async_overall_scores,
+        ) = _summary_related_entities(
             dynamic_link_data=async_link_data,
             activity_data=activity_data,
             link_attributes=async_link_attributes,
@@ -149,7 +157,7 @@ def report_activities(  # nosec - B107
         link_all_scores = link_all_scores.withColumn(
             report_schemas.ASYNC_ACTIVITY, F.lit("")
         )
-    
+
     # aggregate temporal scores for activity links
     if len(temporal_score_list) > 0:
         entity_link_temporal_scores = reduce(DataFrame.unionAll, temporal_score_list)
@@ -165,7 +173,7 @@ def report_activities(  # nosec - B107
         entity_link_overall_scores = spark.createDataFrame(
             [], schemas.ENTITY_OVERALL_ACTIVITY_SCHEMA
         )
-   
+
     # reformat raw entity activity table
     entity_activity_data = activity_data.selectExpr(
         f"{schemas.SOURCE} AS {schemas.ENTITY_ID}",
@@ -276,7 +284,7 @@ def _summary_related_entities(  # nosec - B107
     Returns:
         Tuple[DataFrame, DataFrame, DataFrame]: 3 dataframes containing overall and temporal activity scores
 
-    """    
+    """
     # get link summary and related redflags,
     related_flag_summaries = summarize_related_entity_flags(
         flag_summary_data=flag_summary_data,
@@ -294,7 +302,7 @@ def _summary_related_entities(  # nosec - B107
         report_schemas.LINK_SUMMARY,
         report_schemas.RELATED_FLAG_DETAILS,
     )
-    
+
     # get activity scoring summary
     all_scores, temporal_scores = summarize_link_scores(
         predicted_links=dynamic_link_data,
@@ -306,7 +314,7 @@ def _summary_related_entities(  # nosec - B107
     scoring_summaries = scoring_summaries.withColumnRenamed(
         schemas.SOURCE, schemas.ENTITY_ID
     ).withColumnRenamed(schemas.TARGET, report_schemas.RELATED_ENTITY)
-   
+
     # join all scores in one table
     summary_data = dynamic_link_data.withColumnRenamed(
         schemas.SOURCE, schemas.ENTITY_ID
@@ -319,11 +327,13 @@ def _summary_related_entities(  # nosec - B107
         on=report_schemas.RELATED_ENTITY,
         how="inner",
     )
-    summary_data = (summary_data.join(
-        related_flag_summaries,
-        on=[schemas.ENTITY_ID, report_schemas.RELATED_ENTITY],
-        how="left",
-    )).join(
+    summary_data = (
+        summary_data.join(
+            related_flag_summaries,
+            on=[schemas.ENTITY_ID, report_schemas.RELATED_ENTITY],
+            how="left",
+        )
+    ).join(
         scoring_summaries,
         on=[schemas.ENTITY_ID, report_schemas.RELATED_ENTITY],
         how="left",
@@ -344,12 +354,16 @@ def _summary_related_entities(  # nosec - B107
     summary_data = summary_data.groupby(schemas.ENTITY_ID).agg(
         F.collect_list(related_flag_col).alias(related_flag_col)
     )
-    
+
     # add link type to the all scores
     if related_flag_col == report_schemas.SYNC_ACTIVITY:
-        all_scores = all_scores.withColumn(report_schemas.LINK_TYPE, F.lit(report_schemas.SYNC_ACTIVITY_LINK_TYPE))
+        all_scores = all_scores.withColumn(
+            report_schemas.LINK_TYPE, F.lit(report_schemas.SYNC_ACTIVITY_LINK_TYPE)
+        )
     else:
-        all_scores = all_scores.withColumn(report_schemas.LINK_TYPE, F.lit(report_schemas.ASYNC_ACTIVITY_LINK_TYPE))
+        all_scores = all_scores.withColumn(
+            report_schemas.LINK_TYPE, F.lit(report_schemas.ASYNC_ACTIVITY_LINK_TYPE)
+        )
     return summary_data, temporal_scores, all_scores
 
 

@@ -7,6 +7,8 @@ import logging
 
 from typing import List, Union
 
+import pyspark.sql.functions as F
+
 from dataclasses import dataclass
 from pyspark.sql import DataFrame
 
@@ -24,7 +26,11 @@ from transparency_engine.reporting.entity_flags import report_flags
 from transparency_engine.reporting.entity_relationship_network import (
     report_entity_graph,
 )
-from transparency_engine.reporting.report_schemas import DEFAULT_ENTITY_NAME_ATTRIBUTE
+from transparency_engine.reporting.report_schemas import (
+    DEFAULT_ENTITY_NAME_ATTRIBUTE,
+    DEFAULT_REPORT_BASE_URL,
+    REPORT_LINK,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -55,6 +61,7 @@ class ReportConfig:
     default_entity_name_attribute: str = DEFAULT_ENTITY_NAME_ATTRIBUTE
     include_flagged_links_only: bool = False
     min_percent: float = 0.1
+    report_base_url: str = DEFAULT_REPORT_BASE_URL
 
 
 @dataclass
@@ -63,6 +70,7 @@ class ReportOutput:
     entity_activity_report: ActivityReportOutput
     entity_graph: DataFrame
     html_report: DataFrame
+    report_url: DataFrame
 
 
 def generate_report(  # nosec - B107
@@ -177,21 +185,30 @@ def generate_report(  # nosec - B107
 
     # generate html report data
     static_attribute_summary = static_attribute_report.entity_attribute_summary
-    dynamic_attribute_summary = dynamic_attribute_report.entity_link_all_scores
     static_attribute_summary.show(5)
+
+    dynamic_attribute_summary = dynamic_attribute_report.entity_link_all_scores
     dynamic_attribute_summary.show(5)
-    html_report_data = (static_attribute_summary.join(
-        flag_data, on=ENTITY_ID, how="left"
-    )).join(
-        dynamic_attribute_summary, on=ENTITY_ID, how="left"
-    ).cache()
+    html_report_data = (
+        (static_attribute_summary.join(flag_data, on=ENTITY_ID, how="left"))
+        .join(dynamic_attribute_summary, on=ENTITY_ID, how="left")
+        .cache()
+    )
     logger.info(f"Finished generating html report: {html_report_data.count()}")
     html_report_data.show(5)
+
+    # generate a table with report urls for the web-based report
+    url_data = entity_data.select(ENTITY_ID)
+    url_data = url_data.withColumn(
+        REPORT_LINK, F.concat(F.lit(configs.report_base_url), F.col(ENTITY_ID))
+    )
+    url_data.show()
 
     report_output = ReportOutput(
         entity_attribute_report=static_attribute_report,
         entity_activity_report=dynamic_attribute_report,
         entity_graph=entity_graph_data,
         html_report=html_report_data,
+        report_url=url_data,
     )
     return report_output

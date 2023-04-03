@@ -366,8 +366,9 @@ class TransparencyPipeline:
         sync_attributes = report_step.get("config", {}).get("sync_attributes", [])
         async_attributes = report_step.get("config", {}).get("async_attributes", [])
         entity_name_attribute = report_step.get("config", {}).get(
-            "entity_name_attribute", []
+            "entity_name_attribute", ""
         )
+        report_base_url = report_step.get("config", {}).get("base_url", "")
 
         # Run the report
         config = entity_report.ReportConfig(
@@ -375,6 +376,8 @@ class TransparencyPipeline:
             async_link_attributes=async_attributes,
             entity_name_attribute=entity_name_attribute,
         )
+        if report_base_url != "":
+            config.report_base_url = report_base_url
 
         report_output = entity_report.generate_report(
             entity_data=entity_data_df,
@@ -416,6 +419,7 @@ class TransparencyPipeline:
         )
         self.data_handler.write_data(report_output.entity_graph, "entity_graph_report")
         self.data_handler.write_data(report_output.html_report, "html_report")
+        self.data_handler.write_data(report_output.report_url, "report_url")
 
     def get_config(self) -> Dict[str, Any]:
         """

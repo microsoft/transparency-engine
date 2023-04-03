@@ -614,19 +614,19 @@ def summarize_link_scores(
         activity_attribute=activity_attribute,
         activity_time=activity_time,
     )
-    
+
     # compute period scores
     period_scores = compute_all_active_period_summary(temporal_scores)
     period_scores = period_scores.select(
         schemas.SOURCE, schemas.TARGET, "type", "period_jaccard_score"
     )
-    
+
     scores = overall_scores.join(
         period_scores,
         on=[schemas.SOURCE, schemas.TARGET, "type"],
         how="inner",
     ).cache()
-    logger.info(f'scores count: {scores.count()}')
+    logger.info(f"scores count: {scores.count()}")
     return (scores, temporal_scores)
 
 
@@ -648,16 +648,22 @@ def get_link_score_summary(scores: DataFrame, attributes: List[str]):
     period_scores = scores.filter(F.col("type") == "overall").selectExpr(
         schemas.SOURCE, schemas.TARGET, "period_jaccard_score AS period_score"
     )
-    
+
     attribute_scores = scores.filter(F.col("type").isin(attributes))
-    attribute_scores = attribute_scores.groupby([schemas.SOURCE, schemas.TARGET])\
-                                       .pivot('type').sum('JaccardSimilarity')
+    attribute_scores = (
+        attribute_scores.groupby([schemas.SOURCE, schemas.TARGET])
+        .pivot("type")
+        .sum("JaccardSimilarity")
+    )
     for attribute in attributes:
-        attribute_scores = attribute_scores.withColumnRenamed(attribute, f"{attribute}_score")
+        attribute_scores = attribute_scores.withColumnRenamed(
+            attribute, f"{attribute}_score"
+        )
     attribute_scores = attribute_scores.withColumn(
         "average_score", mean_list_udf(F.array(*[f"{att}_score" for att in attributes]))
     )
-    flatten_scores = period_scores.join(attribute_scores, on=[schemas.SOURCE, schemas.TARGET], how='inner')
+    flatten_scores = period_scores.join(
+        attribute_scores, on=[schemas.SOURCE, schemas.TARGET], how="inner"
+    )
     logger.info("Finished calculating link score summary")
     return flatten_scores
-
