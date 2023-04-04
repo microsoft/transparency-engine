@@ -13,7 +13,7 @@
 			"type": "band",
 			"domain": {
 				"data": "chart-data",
-				"field": "quarter"
+				"field": "time"
 			},
 			"range": "width",
 			"padding": 0.2
@@ -52,9 +52,9 @@
 			"orient": "bottom",
 			"scale": "xscale",
 			"tickSize": 4,
-			"labelAngle": -30,
-			"labelPadding": 10,
-			"labelOffset": -12
+			"labelAngle": -90,
+			"labelPadding": 20,
+			"labelBaseline": "middle"
 		}
 	],
 	"marks": [
@@ -64,14 +64,14 @@
 				"facet": {
 					"data": "chart-data",
 					"name": "facet",
-					"groupby": "quarter"
+					"groupby": "time"
 				}
 			},
 			"encode": {
 				"enter": {
 					"x": {
 						"scale": "xscale",
-						"field": "quarter"
+						"field": "time"
 					}
 				}
 			},
