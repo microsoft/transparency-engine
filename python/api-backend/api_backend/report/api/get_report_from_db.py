@@ -15,20 +15,20 @@ from api_backend.util.db_engine import get_engine
 def get_report_from_db(id=""):
     report_table_name = os.getenv("REPORT_TABLE", "")
     entity_table_name = os.getenv("ENTITY_TABLE", "")
-    filtered_attributes_table_name = os.getenv("ACTIVITY_TABLE", "")
+    activity_table_name_name = os.getenv("ACTIVITY_TABLE", "")
     engine = get_engine()
 
     metadata = MetaData()
     report_table = Table(report_table_name, metadata, autoload_with=engine)
     entity_table = Table(entity_table_name, metadata, autoload_with=engine)
-    filtered_attributes_table = Table(filtered_attributes_table_name, metadata, autoload_with=engine)
+    activity_table_name = Table(activity_table_name_name, metadata, autoload_with=engine)
 
     query_report = select(report_table).where(report_table.c.EntityID == id)
 
     query_entity = select(entity_table).where(entity_table.c.EntityID == id)
 
-    query_filtered_attributes = lambda id_list: select(filtered_attributes_table).where(
-        filtered_attributes_table.c.EntityID.in_(id_list)
+    query_filtered_attributes = lambda id_list: select(activity_table_name).where(
+        activity_table_name.c.EntityID.in_(id_list)
     )
 
     conn = engine.connect()
