@@ -18,7 +18,7 @@ def get_attribute_counts(raw_section):
             value = data.get(new_key, [])
             new_value = {
                 "entity_id": entity_id,
-                "value": item[key],
+                "value": round(item[key], 2),
             }
             value.append(new_value)
             data[new_key] = value
