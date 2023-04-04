@@ -1,0 +1,5 @@
+#
+# production parameters
+#   (TODO: maybe turn this into pipeline variables and call helm with --set)
+#
+domain: transparency-engine.eastus.cloudapp.azure.com

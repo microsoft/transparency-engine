@@ -8,23 +8,23 @@ import logging
 from fastapi import status
 from fastapi.responses import JSONResponse
 
-from api_backend.report.api.get_report_from_db import get_report_from_db
+from api_backend.report.api.get_report_score_from_db import get_report_score_from_db
 
 
-async def get_report(id: str):
+async def get_report_score(id: str):
     """
-    Asynchronously retrieves a report with the specified entity id.
+    Asynchronously retrieves the report score for the specified entity id.
 
-    The function queries a database to retrieve the data to build a report with the specified id and returns it.
+    The function queries a database to retrieve the network score data.
 
     Args:
         id: A string representing the entity id.
 
     Returns:
-        A report object.
+        A network score object.
     """
 
-    logging.info(f"Calling get_report with param: {id}")
+    logging.info(f"Calling get_report score with param: {id}")
 
     if not id:
         return JSONResponse(
@@ -33,8 +33,13 @@ async def get_report(id: str):
         )
 
     try:
-        results = get_report_from_db(id)
-        return JSONResponse(content=results, status_code=status.HTTP_200_OK)
+        result = get_report_score_from_db(id)
+        if result is None:
+            return JSONResponse(
+                content={"error": f"Not found report score with entity id: {id}"},
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
+        return JSONResponse(content=result, status_code=status.HTTP_200_OK)
     except Exception as e:
         logging.error(e, exc_info=True)
         return JSONResponse(

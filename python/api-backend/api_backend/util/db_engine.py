@@ -1,11 +1,11 @@
+#
+# Copyright (c) Microsoft. All rights reserved.
+# Licensed under the MIT license. See LICENSE file in the project.
+#
 import os
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-
-from .load_env import load_env
-
-load_env()
 
 
 def get_engine() -> Engine:
@@ -15,11 +15,12 @@ def get_engine() -> Engine:
     Returns:
         A SQLAlchemy Engine object for connecting to the database.
     """
-    server = os.environ["SQL_ENDPOINT"]
-    database = os.environ["DB_NAME"]
-    username = os.environ["SQL_USERNAME"]
-    password = os.environ["SQL_PASSWORD"]
-    # or possibly 17 or 18 or {SQL Server Native Client 11.0}
+
+    server = os.getenv("SQL_ENDPOINT", "")
+    database = os.getenv("DB_NAME", "")
+    username = os.getenv("SQL_USERNAME", "")
+    password = os.getenv("SQL_PASSWORD", "")
+
     driver = "{ODBC Driver 17 for SQL Server}"
 
     odbc_connect = f"DRIVER={driver};SERVER=tcp:{server};PORT=1433;DATABASE={database};UID={username};PWD={password};Authentication=ActiveDirectoryServicePrincipal;"
