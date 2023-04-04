@@ -2,25 +2,29 @@
 	"$schema": "https://vega.github.io/schema/vega/v5.json",
 	"description": "A basic grouped bar chart example.",
 	"padding": 5,
-
 	"data": [
 		{
 			"name": "chart-data"
 		}
 	],
-
 	"scales": [
 		{
 			"name": "xscale",
 			"type": "band",
-			"domain": { "data": "chart-data", "field": "quarter" },
+			"domain": {
+				"data": "chart-data",
+				"field": "quarter"
+			},
 			"range": "width",
 			"padding": 0.2
 		},
 		{
 			"name": "yscale",
 			"type": "linear",
-			"domain": { "data": "chart-data", "field": "value" },
+			"domain": {
+				"data": "chart-data",
+				"field": "value"
+			},
 			"range": "height",
 			"round": true,
 			"zero": true,
@@ -29,11 +33,13 @@
 		{
 			"name": "color",
 			"type": "ordinal",
-			"domain": { "data": "chart-data", "field": "position" },
+			"domain": {
+				"data": "chart-data",
+				"field": "position"
+			},
 			"range": "category"
 		}
 	],
-
 	"axes": [
 		{
 			"orient": "left",
@@ -42,13 +48,18 @@
 			"labelPadding": 4,
 			"zindex": 1
 		},
-		{ "orient": "bottom", "scale": "xscale" }
+		{
+			"orient": "bottom",
+			"scale": "xscale",
+			"tickSize": 4,
+			"labelAngle": -30,
+			"labelPadding": 10,
+			"labelOffset": -12
+		}
 	],
-
 	"marks": [
 		{
 			"type": "group",
-
 			"from": {
 				"facet": {
 					"data": "chart-data",
@@ -56,36 +67,60 @@
 					"groupby": "quarter"
 				}
 			},
-
 			"encode": {
 				"enter": {
-					"x": { "scale": "xscale", "field": "quarter" }
+					"x": {
+						"scale": "xscale",
+						"field": "quarter"
+					}
 				}
 			},
-
-			"signals": [{ "name": "width", "update": "bandwidth('xscale')" }],
-
+			"signals": [
+				{
+					"name": "width",
+					"update": "bandwidth('xscale')"
+				}
+			],
 			"scales": [
 				{
 					"name": "pos",
 					"type": "band",
 					"range": "width",
-					"domain": { "data": "facet", "field": "position" }
+					"domain": {
+						"data": "facet",
+						"field": "position"
+					}
 				}
 			],
-
 			"marks": [
 				{
 					"name": "bars",
-					"from": { "data": "facet" },
+					"from": {
+						"data": "facet"
+					},
 					"type": "rect",
 					"encode": {
 						"enter": {
-							"x": { "scale": "pos", "field": "position" },
-							"width": { "scale": "pos", "band": 1 },
-							"y": { "scale": "yscale", "field": "value" },
-							"y2": { "scale": "yscale", "value": 0 },
-							"fill": { "scale": "color", "field": "position" }
+							"x": {
+								"scale": "pos",
+								"field": "position"
+							},
+							"width": {
+								"scale": "pos",
+								"band": 1
+							},
+							"y": {
+								"scale": "yscale",
+								"field": "value"
+							},
+							"y2": {
+								"scale": "yscale",
+								"value": 0
+							},
+							"fill": {
+								"scale": "color",
+								"field": "position"
+							}
 						}
 					}
 				}

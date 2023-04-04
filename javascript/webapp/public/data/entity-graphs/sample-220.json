@@ -1,1 +1,109 @@
-{"nodes":[{"id":0,"name":"107-609-5431","type":"phone number","relationship":"attribute","flag":0},{"id":8,"name":"220","type":"EntityID","relationship":"target","flag":0},{"id":2,"name":"212--220","type":"sync_activity","relationship":"attribute","flag":0},{"id":6,"name":"461==CHRISTOPHER LEE","type":"company director","relationship":"attribute","flag":0},{"id":1,"name":"212","type":"EntityID","relationship":"related","flag":1},{"id":5,"name":"443==MELODY WHEELER","type":"company director","relationship":"attribute","flag":0},{"id":7,"name":"8729 MICHELLE SUMMIT JOHNSONCHESTER HAWAII 99155 UNITED STATES","type":"address","relationship":"attribute","flag":0},{"id":3,"name":"218","type":"EntityID","relationship":"related","flag":0},{"id":4,"name":"242","type":"EntityID","relationship":"related","flag":0}],"edges":[{"source":0,"target":8},{"source":2,"target":8},{"source":6,"target":8},{"source":1,"target":2},{"source":1,"target":5},{"source":1,"target":7},{"source":3,"target":0},{"source":4,"target":6},{"source":5,"target":4},{"source":7,"target":3}]}
+{
+    "nodes": [
+        {
+            "id": 0,
+            "name": "107-609-5431",
+            "type": "phone number",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 8,
+            "name": "220",
+            "type": "EntityID",
+            "relationship": "target",
+            "flag": 0
+        },
+        {
+            "id": 2,
+            "name": "212--220",
+            "type": "sync_activity",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 6,
+            "name": "461==CHRISTOPHER LEE",
+            "type": "company director",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 1,
+            "name": "212",
+            "type": "EntityID",
+            "relationship": "related",
+            "flag": 1
+        },
+        {
+            "id": 5,
+            "name": "443==MELODY WHEELER",
+            "type": "company director",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 7,
+            "name": "8729 MICHELLE SUMMIT JOHNSONCHESTER HAWAII 99155 UNITED STATES",
+            "type": "address",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 3,
+            "name": "218",
+            "type": "EntityID",
+            "relationship": "related",
+            "flag": 0
+        },
+        {
+            "id": 4,
+            "name": "242",
+            "type": "EntityID",
+            "relationship": "related",
+            "flag": 0
+        }
+    ],
+    "edges": [
+        {
+            "source": 0,
+            "target": 8
+        },
+        {
+            "source": 2,
+            "target": 8
+        },
+        {
+            "source": 6,
+            "target": 8
+        },
+        {
+            "source": 1,
+            "target": 2
+        },
+        {
+            "source": 1,
+            "target": 5
+        },
+        {
+            "source": 1,
+            "target": 7
+        },
+        {
+            "source": 3,
+            "target": 0
+        },
+        {
+            "source": 4,
+            "target": 6
+        },
+        {
+            "source": 5,
+            "target": 4
+        },
+        {
+            "source": 7,
+            "target": 3
+        }
+    ]
+}
