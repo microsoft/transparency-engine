@@ -4,7 +4,7 @@ trigger:
   batch: true
   branches:
     include:
-      - main
+      - helm-fixes
 
 variables:
   Codeql.Enabled: true
@@ -39,7 +39,7 @@ stages:
     displayName: Deploy - Frontend Images
     dependsOn: []
     #if main branch var
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/helm-fixes')
     jobs:
       - template: jobs/cd-frontend.yml
         parameters:
@@ -50,7 +50,7 @@ stages:
   - stage: DeployBuildBackendImages
     displayName: Deploy - Backend Images
     dependsOn: []
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/helm-fixes')
     jobs:
       - template: jobs/cd-backend.yml
         parameters:
