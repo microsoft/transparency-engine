@@ -2,7 +2,6 @@ import os
 
 from sqlalchemy import MetaData, Table, select
 
-from api_backend.report.util.parsers import parse_value
 from api_backend.util.db_engine import get_engine
 
 

@@ -4,15 +4,16 @@
 #
 
 
+from api_backend.report.constants.attributes import link_summary, related
 from api_backend.report.util.util import build_related_entities_data
 
 
 def get_attribute_counts(raw_section):
     data = {}
     for item in raw_section:
-        entity_id = item["related"]
+        entity_id = item[related]
         for key in item:
-            if key == 'related' or key == 'link_summary':
+            if key == related or key == link_summary:
                 continue
             new_key = key.split("_")[0] if "score" in key else key.replace("_", " ")
             value = data.get(new_key, [])
