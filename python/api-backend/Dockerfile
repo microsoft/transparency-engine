@@ -26,10 +26,12 @@ COPY ./pyproject.toml .
 COPY ./scripts ./scripts
 
 # Install python denpendencies
+RUN chmod +x ./scripts/install_python_deps.sh
 RUN ./scripts/install_python_deps.sh
 
 # Copy remaining files
 COPY . .
 
 # Start backend either in API or worker mode, depending on the WORKER env var
+RUN chmod +x ./scripts/start.sh
 ENTRYPOINT [ "./scripts/start.sh" ]
