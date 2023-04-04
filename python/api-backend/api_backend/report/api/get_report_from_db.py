@@ -8,6 +8,7 @@ import os
 from sqlalchemy import MetaData, Table, select
 
 from api_backend.report.builders.report import build_report
+from api_backend.report.constants.attributes import async_activity, related, sync_activity
 from api_backend.report.util.parsers import parse_activity, parse_entity_details, parse_raw_report
 from api_backend.util.db_engine import get_engine
 
@@ -41,14 +42,14 @@ def get_report_from_db(id=""):
     raw_report = parse_raw_report(column_names, report_results)
     activity = {}
 
-    if raw_report.get("syncactivity", None):
-        entity_ids = [id] + [item["related"] for item in raw_report["syncactivity"]]
+    if raw_report.get(sync_activity, None):
+        entity_ids = [id] + [item[related] for item in raw_report[sync_activity]]
         activity_results = conn.execute(query_filtered_attributes(entity_ids)).fetchall()
-        activity = {"syncactivity": parse_activity(activity_results, id)}
-    if raw_report.get("asyncactivity", None):
-        entity_ids = [id] + [item["related"] for item in raw_report["asyncactivity"]]
+        activity = {sync_activity: parse_activity(activity_results, id)}
+    if raw_report.get(async_activity, None):
+        entity_ids = [id] + [item[related] for item in raw_report[async_activity]]
         activity_results = conn.execute(query_filtered_attributes(entity_ids)).fetchall()
-        activity = {"asyncactivity": parse_activity(activity_results, id)}
+        activity = {async_activity: parse_activity(activity_results, id)}
 
     conn.close()
     return build_report(id, raw_report, entity_details, activity)
