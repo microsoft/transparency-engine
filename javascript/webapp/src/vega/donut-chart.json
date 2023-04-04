@@ -55,6 +55,7 @@
 
 	"marks": [
 		{
+			"name": "arcs",
 			"type": "arc",
 			"from": { "data": "chart-data" },
 			"encode": {
@@ -70,6 +71,24 @@
 					"innerRadius": { "signal": "innerRadius" },
 					"outerRadius": { "signal": "width / 2" },
 					"cornerRadius": { "signal": "cornerRadius" }
+				}
+			}
+		},
+		{
+			"type": "text",
+			"from": { "data": "arcs" },
+			"encode": {
+				"enter": {
+					"x": { "field": "x" },
+					"y": { "field": "y" },
+					"radius": { "value": 80 },
+					"theta": {
+						"signal": "((datum.endAngle - datum.startAngle) / 2) + datum.startAngle"
+					},
+					"align": { "value": "center" },
+					"baseline": { "value": "middle" },
+					"text": { "field": "datum.field" },
+					"fontWeight": { "value": "bold" }
 				}
 			}
 		}
