@@ -14,7 +14,7 @@ report_router = APIRouter()
 
 @report_router.get("/health")
 async def main():
-    return {"message": "report api is healthy"}
+    return {"message": "report api is healthy - test"}
 
 
 @report_router.get("/score/{id}")
