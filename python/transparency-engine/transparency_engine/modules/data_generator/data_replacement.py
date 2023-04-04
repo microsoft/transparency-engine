@@ -96,7 +96,7 @@ def __fake_value(
     elif attribute_type == AttributeTypes.PHONE:
         return fake.unique.phone_number().upper()
     elif attribute_type in [AttributeTypes.BENEFICIAL_OWNER, AttributeTypes.DIRECTOR]:
-        return f"{original_value}=={fake.unique.name().upper()}"
+        return f"{fake.unique.name().upper()}(ID:{original_value})"
     else:
         return f"{attribute_type}{separator}{original_value}"
 

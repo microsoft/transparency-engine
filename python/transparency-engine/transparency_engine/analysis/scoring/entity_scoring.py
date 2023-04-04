@@ -106,14 +106,18 @@ def compute_entity_score(
             logger.info(f"Normalizing by max scale: {measure.name}")
             scaled_output_col = f"{measure.name}_{NormalizationTypes.BY_MAX_VALUE}"
             entity_measure_data = normalize_max_scale(
-                df=entity_measure_data, input_col=measure.name, output_col=scaled_output_col
+                df=entity_measure_data,
+                input_col=measure.name,
+                output_col=scaled_output_col,
             )
             measure_cols.append(scaled_output_col)
         else:
             logger.info(f"Normalizing by rank scale: {measure.name}")
             scaled_output_col = f"{measure.name}_{NormalizationTypes.BY_RANK_VALUE}"
             entity_measure_data = normalize_rank(
-                df=entity_measure_data, input_col=measure.name, output_col=scaled_output_col
+                df=entity_measure_data,
+                input_col=measure.name,
+                output_col=scaled_output_col,
             )
             measure_cols.append(scaled_output_col)
 

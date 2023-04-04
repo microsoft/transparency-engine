@@ -7,12 +7,18 @@ import logging
 
 from typing import List, Union
 
+import pyspark.sql.functions as F
+
 from dataclasses import dataclass
 from pyspark.sql import DataFrame
 
 from transparency_engine.pipeline.schemas import ENTITY_ID
-from transparency_engine.reporting.entity_activities import report_activities
+from transparency_engine.reporting.entity_activities import (
+    ActivityReportOutput,
+    report_activities,
+)
 from transparency_engine.reporting.entity_attributes import (
+    AttributeReportOutput,
     get_attribute_mapping,
     report_entity_attributes,
 )
@@ -20,8 +26,15 @@ from transparency_engine.reporting.entity_flags import report_flags
 from transparency_engine.reporting.entity_relationship_network import (
     report_entity_graph,
 )
+from transparency_engine.reporting.report_schemas import (
+    DEFAULT_ENTITY_NAME_ATTRIBUTE,
+    DEFAULT_REPORT_BASE_URL,
+    REPORT_LINK,
+)
+
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class ReportConfig:
@@ -29,6 +42,12 @@ class ReportConfig:
     Configuration for the final entity report.
 
     Params:
+        sync_link_attributes: List[str]
+            List of attributes used to explain synchronous activity links
+        async_link_attributes: List[str]
+            List of attributes used to explain asynchronous activity links
+        entity_name_attribute: str
+            Static attribute that will be used as the default entity name in the report (e.g. company_name)
         include_flagged_links_only: bool, default = False
             If True, we only generate entity graphs for entities that either have a flag in their network
             or have a direct activity paths
@@ -38,16 +57,20 @@ class ReportConfig:
 
     sync_link_attributes: List[str]
     async_link_attributes: List[str]
+    entity_name_attribute: str
+    default_entity_name_attribute: str = DEFAULT_ENTITY_NAME_ATTRIBUTE
     include_flagged_links_only: bool = False
     min_percent: float = 0.1
+    report_base_url: str = DEFAULT_REPORT_BASE_URL
 
 
 @dataclass
 class ReportOutput:
-    entity_attributes: DataFrame
-    entity_activity: DataFrame
+    entity_attribute_report: AttributeReportOutput
+    entity_activity_report: ActivityReportOutput
     entity_graph: DataFrame
     html_report: DataFrame
+    report_url: DataFrame
 
 
 def generate_report(  # nosec - B107
@@ -60,6 +83,7 @@ def generate_report(  # nosec - B107
     predicted_link_data: DataFrame,
     flag_metadata: DataFrame,
     configs: ReportConfig,
+    entity_name_attribute: str,
     attribute_metadata: Union[DataFrame, None] = None,
     attribute_join_token: str = "::",
     edge_join_token: str = "--",
@@ -90,8 +114,10 @@ def generate_report(  # nosec - B107
             Contains predicted node links, with schema [Source, Target, Paths]
         flag_metadata: DataFrame, default = None
             Contains review flag definition with schema [FlagID, Category, Description, IsSupportingFlag, FlagWeight]
+        entity_name_attribute: str
+            Name of the static attribute used as the default entity name.
         attribute_metadata: DataFrame, default = None
-            Dataframe contaiing attribute definition, with schema [AttributeID, Name, Description].
+            Dataframe containing attribute definition, with schema [AttributeID, Name, Description].
             If None, a default metadata will be created
         configs: ReportConfig
             Configuration of the entity report
@@ -105,20 +131,20 @@ def generate_report(  # nosec - B107
 
     """
     # generate entity attributes table
-    (
-        updated_attribute_metadata,
-        entity_attribute_data,
-        attribute_summary_data,
-    ) = report_entity_attributes(
+    static_attribute_report = report_entity_attributes(
         entity_data=entity_data,
         static_relationship_data=static_relationship_data,
         other_attribute_data=other_attribute_data,
+        entity_name_attribute=entity_name_attribute,
+        default_entity_name_attribute=configs.default_entity_name_attribute,
         attribute_metadata=attribute_metadata,
     )
-    logger.info('Finished generating entity attribute report')
+    logger.info("Finished generating entity attribute report")
 
     # generate entity graph
-    attribute_name_mapping = get_attribute_mapping(updated_attribute_metadata)
+    attribute_name_mapping = get_attribute_mapping(
+        static_attribute_report.entity_attribute_metadata
+    )
     entity_graph_data = report_entity_graph(
         predicted_link_data=predicted_link_data,
         network_score_data=network_score_data,
@@ -126,7 +152,8 @@ def generate_report(  # nosec - B107
         include_flagged_links_only=configs.include_flagged_links_only,
         attribute_join_token=attribute_join_token,
     ).cache()
-    logger.info(f'Finished generating entity graph report: {entity_graph_data.count()}')
+    logger.info(f"Finished generating entity graph report: {entity_graph_data.count()}")
+    entity_graph_data.show(5)
 
     # generate flag data
     flag_data = report_flags(
@@ -139,10 +166,10 @@ def generate_report(  # nosec - B107
         attribute_join_token=attribute_join_token,
         edge_join_token=edge_join_token,
     ).cache()
-    logger.info(f'Finished generating entity flag report: {flag_data.count()}')
+    logger.info(f"Finished generating entity flag report: {flag_data.count()}")
 
     # generate activity data
-    activity_summary_data, entity_activity_data = report_activities(
+    dynamic_attribute_report = report_activities(
         entity_data=entity_data,
         predicted_link_data=predicted_link_data,
         dynamic_relationship_data=dynamic_graph_data,
@@ -154,19 +181,34 @@ def generate_report(  # nosec - B107
         attribute_join_token=attribute_join_token,
         edge_join_token=edge_join_token,
     )
-    logger.info('Finished generating entity acitity report')
+    logger.info("Finished generating entity acitity report")
 
     # generate html report data
-    html_report_data = attribute_summary_data.join(flag_data, on=ENTITY_ID, how="left")
-    html_report_data = html_report_data.join(
-        activity_summary_data, on=ENTITY_ID, how="left"
-    ).cache()
-    logger.info(f'Finished generating html report: {html_report_data.count()}')
+    static_attribute_summary = static_attribute_report.entity_attribute_summary
+    static_attribute_summary.show(5)
+
+    dynamic_attribute_summary = dynamic_attribute_report.entity_link_all_scores
+    dynamic_attribute_summary.show(5)
+    html_report_data = (
+        (static_attribute_summary.join(flag_data, on=ENTITY_ID, how="left"))
+        .join(dynamic_attribute_summary, on=ENTITY_ID, how="left")
+        .cache()
+    )
+    logger.info(f"Finished generating html report: {html_report_data.count()}")
+    html_report_data.show(5)
+
+    # generate a table with report urls for the web-based report
+    url_data = entity_data.select(ENTITY_ID)
+    url_data = url_data.withColumn(
+        REPORT_LINK, F.concat(F.lit(configs.report_base_url), F.col(ENTITY_ID))
+    )
+    url_data.show()
 
     report_output = ReportOutput(
-        entity_attributes=entity_attribute_data,
-        entity_activity=entity_activity_data,
+        entity_attribute_report=static_attribute_report,
+        entity_activity_report=dynamic_attribute_report,
         entity_graph=entity_graph_data,
         html_report=html_report_data,
+        report_url=url_data,
     )
     return report_output

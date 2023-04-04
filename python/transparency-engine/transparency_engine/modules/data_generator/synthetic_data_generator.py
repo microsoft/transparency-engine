@@ -31,7 +31,7 @@ from transparency_engine.pipeline.schemas import (
     REVIEW_FLAG_SCHEMA,
     STATIC_SCHEMA,
 )
-from transparency_engine.spark.utils import spark, sc
+from transparency_engine.spark.utils import sc, spark
 
 
 logger = logging.getLogger(__name__)
@@ -449,14 +449,14 @@ class SyntheticDataGenerator:
         dynamic_relationship_links = defaultdict(list)
         for source, target in G.edges():
             if (
-                random.random() # nosec - B311
-                < self.configs.related_attribute_connection_prob  
+                random.random()  # nosec - B311
+                < self.configs.related_attribute_connection_prob
             ):
                 static_relationship_links[source].append(target)
                 static_relationship_links[target].append(source)
             if (
-                random.random() # nosec - B311
-                < self.configs.related_activity_connection_prob  
+                random.random()  # nosec - B311
+                < self.configs.related_activity_connection_prob
             ):
                 dynamic_relationship_links[source].append(target)
                 dynamic_relationship_links[target].append(source)
@@ -664,8 +664,8 @@ class SyntheticDataGenerator:
             if entity in partitioned_entities or related in partitioned_entities:
                 continue
             if (
-                random.random() # nosec - B311
-                < self.configs.similar_activity_partition_prob  
+                random.random()  # nosec - B311
+                < self.configs.similar_activity_partition_prob
             ):
                 partitioned_entities.add(entity)
                 partitioned_entities.add(related)
@@ -962,6 +962,7 @@ def sample_with_thresholds(thresholds: List[float]) -> int:
         break
     return sampled_index
 
+
 def write_synthetic_data(data_tables: Dict[str, DataFrame], output_path: str):
     """
     Write all data tables to CSV files
@@ -972,8 +973,9 @@ def write_synthetic_data(data_tables: Dict[str, DataFrame], output_path: str):
         output_path: str
             Path to write the CSV files
     """
-    for table in data_tables:     
+    for table in data_tables:
         __write_to_csv(data_tables[table], output_path, table)
+
 
 def __write_to_csv(data: DataFrame, output_path: str, filename: str) -> None:
     """

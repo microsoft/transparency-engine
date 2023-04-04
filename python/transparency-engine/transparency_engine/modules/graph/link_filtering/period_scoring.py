@@ -12,6 +12,7 @@ from pyspark.sql import DataFrame, functions as F
 
 import transparency_engine.pipeline.schemas as schemas
 
+from transparency_engine.modules.data_shaper.spark_transform import column_to_list
 from transparency_engine.modules.graph.link_filtering.activity_scoring import (
     aggregate_all_activities,
     aggregate_all_activities_by_type,
@@ -375,7 +376,7 @@ def compute_all_period_overlap_score(
     Returns:
     --------
         scores_df: DataFrames
-            Overall scores [source, target, source_only, target_only, shared, jaccard_similarity, overlap_score]
+            Overall scores [source, target, type, period, shared, source_only, target_only, jaccard_similarity, overlap_score]
     """
     scores_df = compute_period_overlap_score(
         predicted_links=predicted_links,
@@ -387,7 +388,6 @@ def compute_all_period_overlap_score(
         activity_time=activity_time,
         activity_type=None,
     )
-    scores_df.show(5)
 
     scores_by_type_df = compute_period_overlap_score(
         predicted_links=predicted_links,
@@ -399,7 +399,6 @@ def compute_all_period_overlap_score(
         activity_time=activity_time,
         activity_type=activity_type,
     )
-    scores_by_type_df.show(5)
 
     scores_df = scores_df.selectExpr(
         f"{source_entity} as {schemas.SOURCE}",
@@ -411,9 +410,7 @@ def compute_all_period_overlap_score(
         f"{schemas.TARGET}_only",
         schemas.JACCARD_SIMILARITY,
         schemas.OVERLAP_SCORE,
-    ).cache()
-
-    logger.info(f"overall period score count: {scores_df.count()}")
+    )
 
     scores_by_type_df = scores_by_type_df.selectExpr(
         f"{source_entity} as {schemas.SOURCE}",
@@ -425,11 +422,9 @@ def compute_all_period_overlap_score(
         f"{schemas.TARGET}_only",
         schemas.JACCARD_SIMILARITY,
         schemas.OVERLAP_SCORE,
-    ).cache()
-    logger.info(f"period score count: {scores_by_type_df.count()}")
+    )
 
     scores_df = scores_df.union(scores_by_type_df).cache()
-    logger.info(f"all period score count: {scores_df.count()}")
 
     mirrored_scores_df = scores_df.selectExpr(
         f"{schemas.TARGET} as {schemas.SOURCE}",
@@ -442,8 +437,7 @@ def compute_all_period_overlap_score(
         schemas.JACCARD_SIMILARITY,
         schemas.OVERLAP_SCORE,
     )
-    scores_df = scores_df.union(mirrored_scores_df).cache()
-    logger.info(f"overall score record count: {scores_df.count()}")
+    scores_df = scores_df.union(mirrored_scores_df)
     return scores_df
 
 
@@ -465,10 +459,7 @@ def compute_active_period_summary_by_type(
         Spark DataFrame
             Active period summary for the given activity type. Output data schema [source, target, type, source_periods, target_periods, shared_periods]
     """
-    overlap_scores = temporal_overlap_scores.filter(
-        F.col("type") == activity_type
-    ).cache()
-    logger.info(overlap_scores.count())
+    overlap_scores = temporal_overlap_scores.filter(F.col("type") == activity_type)
 
     # calculate source active periods
     source_periods = overlap_scores.filter(
@@ -499,8 +490,7 @@ def compute_active_period_summary_by_type(
         .join(target_periods, on=[f"{schemas.SOURCE}", f"{schemas.TARGET}"], how="left")
         .join(shared_periods, on=[f"{schemas.SOURCE}", f"{schemas.TARGET}"], how="left")
     )
-    period_scores = period_scores.fillna(0).cache()
-    logger.info(period_scores.count())
+    period_scores = period_scores.fillna(0)
 
     # calculate overlap scores
     overlap_score_udf = F.udf(
@@ -552,3 +542,63 @@ def compute_all_active_period_summary(temporal_overlap_scores: DataFrame) -> Dat
         all_score_list.append(period_scores)
     all_scores = reduce(DataFrame.unionAll, all_score_list)
     return all_scores
+
+
+def summarize_temporal_activities(
+    activity_data: DataFrame,
+    activity_entity: str = schemas.SOURCE,
+    activity_attribute: str = schemas.TARGET,
+    activity_attribute_type: str = schemas.TARGET_TYPE,
+    activity_time: str = schemas.TIME_PERIOD,
+) -> DataFrame:
+    """
+    Compute count of activity details for each time period.
+
+    Params:
+        activity_data: Spark DataFrame
+            Dataframe containing the raw activity attributes, with schema [Source, Target, SourceType, TargetType, TimePeriod]
+        activity_entity: str
+            Name of the entity column in the activity dataframe
+        activity_attribute: str
+            Name of the activity attribute column in the activity dataframe
+        activity_time: str
+            Name of the activity time period column in the activity_dataframe
+
+    Returns:
+        Spark DataFrame: contains count for each activity attribute per period
+    """
+    result_list = []
+    # calculate overall activity detail counts for each period
+    all_periods = activity_data.select(activity_time).dropDuplicates()
+    all_entities = activity_data.select(activity_entity).dropDuplicates()
+    all_entities = all_entities.join(F.broadcast(all_periods))
+
+    overall_activity_counts = activity_data.groupby(
+        [activity_entity, activity_time]
+    ).agg(F.countDistinct(activity_attribute).alias("activity_count"))
+    overall_activity_counts = all_entities.join(
+        overall_activity_counts, on=[activity_entity, activity_time], how="left"
+    )
+    overall_activity_counts = overall_activity_counts.fillna(0)
+    overall_activity_counts = overall_activity_counts.withColumn(
+        "type", F.lit("overall")
+    )
+    result_list.append(overall_activity_counts)
+
+    # calculate activity detail count by type for each period
+    attribute_types = column_to_list(activity_data, activity_attribute_type)
+    for type in attribute_types:
+        activity_type_data = activity_data.filter(
+            F.col(activity_attribute_type) == type
+        )
+        activity_type_counts = activity_type_data.groupby(
+            [activity_entity, activity_time]
+        ).agg(F.countDistinct(activity_attribute).alias("activity_count"))
+        activity_type_counts = all_entities.join(
+            activity_type_counts, on=[activity_entity, activity_time], how="left"
+        )
+        activity_type_counts = activity_type_counts.fillna(0)
+        activity_type_counts = activity_type_counts.withColumn("type", F.lit(type))
+        result_list.append(activity_type_counts)
+    summary_scores = reduce(DataFrame.unionAll, result_list)
+    return summary_scores

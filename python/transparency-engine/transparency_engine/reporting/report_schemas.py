@@ -13,6 +13,17 @@ from typing import Final, List
 from transparency_engine.analysis.scoring.measures import NetworkMeasures
 
 
+# Default entity name attribute
+DEFAULT_ENTITY_NAME_ATTRIBUTE: Final[str] = "default_name"
+
+# default base url for the web-based report
+DEFAULT_REPORT_BASE_URL: Final[str] = "http://localhost:3000/report/"
+
+# activity link type values (to be used in PowerBI report)
+LINK_TYPE: Final[str] = "link_type"
+SYNC_ACTIVITY_LINK_TYPE: Final[str] = "sync_activity"
+ASYNC_ACTIVITY_LINK_TYPE: Final[str] = "async_activity"
+
 # Flag summary data keys
 FLAG_SUMMARY_MEASURES: Final[List[NetworkMeasures]] = [
     NetworkMeasures.NETWORK_FLAG_COUNT,
@@ -70,3 +81,6 @@ PATH_SOURCE_RELATIONSHIP: Final[str] = "PathSourceRelationship"
 PATH_TARGET_RELATIONSHIP: Final[str] = "PathTargetRelationship"
 PATH_SOURCE_FLAG: Final[str] = "PathSourceFlag"
 PATH_TARGET_FLAG: Final[str] = "PathTargetFlag"
+
+# column containing the URL to the web-based report page
+REPORT_LINK: Final[str] = "ReportLink"

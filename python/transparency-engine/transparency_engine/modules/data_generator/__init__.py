@@ -11,7 +11,7 @@ from transparency_engine.modules.data_generator.synthetic_data_generator import 
     FlagConfig,
     StaticAttributeConfig,
     SyntheticDataGenerator,
-    write_synthetic_data
+    write_synthetic_data,
 )
 
 
@@ -23,5 +23,5 @@ __all__ = [
     "FlagConfig",
     "EntityConfig",
     "DataSourceConfig",
-    "write_synthetic_data"
+    "write_synthetic_data",
 ]

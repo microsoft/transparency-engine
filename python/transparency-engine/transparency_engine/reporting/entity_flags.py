@@ -4,6 +4,7 @@
 #
 
 import logging
+
 from typing import Dict, List
 
 import pyspark.sql.functions as F
@@ -21,9 +22,9 @@ from transparency_engine.pipeline.schemas import (
     ENTITY_ID,
     EVIDENCE,
     PATHS,
+    REVIEW_FLAG_ID,
     SOURCE_NODE,
     TARGET_NODE,
-    REVIEW_FLAG_ID,
 )
 from transparency_engine.reporting.report_schemas import (
     DIRECT_FLAGS,
@@ -41,6 +42,7 @@ from transparency_engine.reporting.report_schemas import (
     RELATED_FLAG_DETAILS,
     REVIEW_FLAG_SUMMARY,
 )
+
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +129,7 @@ def __summarize_flag_measures(
 ) -> DataFrame:
     """
     Combine a list of network measures into a single json format to populate the
-    Riew Flag Summary section in the report.
+    Review Flag Summary section in the report.
 
     Params:
     -------------
@@ -148,7 +150,7 @@ def __summarize_flag_measures(
     measure_columns = [measure.value for measure in FLAG_SUMMARY_MEASURES]
     all_measure_columns = []
     for column in measure_columns:
-        logger.info(f'Normalizing: {column}')
+        logger.info(f"Normalizing: {column}")
         output_col = f"{column}_{PERCENT_RANK_MEASURE_POSTFIX}"
         summary_data = percent_rank(
             df=summary_data,
@@ -187,6 +189,9 @@ def __summarize_entity_flags(
     summary_data = summary_data.withColumnRenamed(
         DESCRIPTION, FLAG_DESCRIPTION
     ).withColumnRenamed(EVIDENCE, FLAG_EVIDENCE)
+    summary_data = summary_data.groupby([ENTITY_ID, FLAG_DESCRIPTION]).agg(
+        F.collect_set(FLAG_EVIDENCE).alias(FLAG_EVIDENCE)
+    )
     summary_data = summary_data.withColumn(
         OWN_FLAGS, F.to_json(F.struct(FLAG_DESCRIPTION, FLAG_EVIDENCE))
     )
