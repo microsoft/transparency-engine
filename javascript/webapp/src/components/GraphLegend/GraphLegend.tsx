@@ -42,10 +42,12 @@ const Relationships = () => {
 	const warn = theme.application().error().hex()
 	const fill = theme.application().lowMidContrast().hex()
 	const stroke = theme.application().background().hex()
+	const bold = theme.rule().stroke().hex()
+
 	return (
 		<Row>
 			<Node>
-				<Diamond fill={fill} stroke={stroke} size={18} />
+				<Diamond fill={fill} stroke={bold} size={18} />
 				<Label>target</Label>
 			</Node>
 			<Node>

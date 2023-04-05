@@ -23,7 +23,7 @@ import { TableHead } from '../tables/TableHead.js'
 
 export const ComplexTableComponent: React.FC<{
 	dataObject: AttributeBlock<ComplexTableAttribute>
-	relatedGraphs: Map<string, GraphData>
+	relatedGraphs: Map<string, GraphData> | undefined
 }> = memo(function ComplexTableComponent({ dataObject, relatedGraphs }) {
 	return (
 		<SubsectionContainer>
@@ -33,7 +33,7 @@ export const ComplexTableComponent: React.FC<{
 			<Tables>
 				{dataObject.data?.map((row, ridx) => {
 					const id = row[0] as string
-					const graph = relatedGraphs.get(id)
+					const graph = relatedGraphs !== undefined ? relatedGraphs.get(id): undefined
 					return (
 						<TableGraphContainer key={`related-flags-${id}`}>
 							<Table>

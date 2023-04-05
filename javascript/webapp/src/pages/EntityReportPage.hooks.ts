@@ -95,7 +95,7 @@ export function useRelatedEntityGraphs(
 		f()
 	}, [report, relatedIds])
 
-	return useGraphDataMap(graphs)
+	return graphs !== undefined ? useGraphDataMap(graphs) : graphs
 }
 
 function useRelatedEntityIds(report: Report | undefined): string[] {

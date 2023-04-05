@@ -102,7 +102,7 @@ export const EntityReportPage: React.FC = memo(function EntityReportPage() {
 							</Else>
 						</If>
 					</GraphContainer>
-					<If condition={report !== undefined && relatedGraphs !== undefined}>
+					<If condition={report !== undefined}>
 						<Then>
 							<ReportTemplate report={report!} relatedGraphs={relatedGraphs!} />
 						</Then>

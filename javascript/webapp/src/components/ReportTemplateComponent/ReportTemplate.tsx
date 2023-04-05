@@ -11,7 +11,7 @@ import { ReportTemplateSection } from './ReportTemplateSection.js'
 
 export interface ReportTemplateProps {
 	report: Report
-	relatedGraphs: Map<string, GraphData>
+	relatedGraphs: Map<string, GraphData> | undefined
 }
 
 export const ReportTemplate: React.FC<ReportTemplateProps> = memo(
