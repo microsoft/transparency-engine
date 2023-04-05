@@ -96,6 +96,18 @@ applicationGroups:
             value: "{{ .Values.SQL_USERNAME }}"
           - name: SQL_PASSWORD
             value: "{{ .Values.SQL_PASSWORD }}"
+          - name: ENTITY_TABLE
+            value: "entity_attributes_report"
+          - name: REPORT_TABLE
+            value: "html_report"
+          - name: GRAPH_TABLE
+            value: "entity_graph_report"
+          - name: ACTIVITY_TABLE
+            value: "entity_activity_report"
+          - name: REPORT_URL_TABLE
+            value: "report_url"
+          - name: NETWORK_SCORING_TABLE
+            value: "network_scoring"
 
       - name: redis
         image: "{{ .Values.redisImage }}"
