@@ -37,9 +37,6 @@ jobs:
           chartType: FilePath
           chartPath: "helm"
           releaseName: "transparency-engine"
-          setValues: |
-            TEST_ENV_VAR300=${{ parameters.TEST_ENV_VAR30 }}
-            DATABASE_TEST0=${{ parameters.DATABASE_TEST }}
-            DATABASE_TEST400=${{ parameters.DATABASE_TEST40 }}
-          # valueFile: "${{ parameters.valueFile }}"
+          arguments: --set DATABASE_TEST40=${{ parameters.DATABASE_TEST40 }} --set DATABASE_TEST=${{ parameters.DATABASE_TEST }} --set TEST_ENV_VAR30=${{ parameters.TEST_ENV_VAR30 }}
+          valueFile: "${{ parameters.valueFile }}"
           waitForExecution: false

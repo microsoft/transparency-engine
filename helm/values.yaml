@@ -78,7 +78,7 @@ applicationGroups:
         servicePort: 8081
         path: /api
         env:
-          - name: REDIS_URLL
+          - name: REDIS_URL
             value: redis://redis:6379/0
           - name: STORAGE
             value: /data/
