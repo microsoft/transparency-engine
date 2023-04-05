@@ -17,8 +17,8 @@ class RawReport(Dict):
     activity_summary_details: Optional[RawSection] = None
     direct_redflag_details: Optional[RawSection] = None
     indirect_redflag_details: Optional[RawSection] = None
-    sync_entities: Optional[RawSection] = None
-    async_entities: Optional[RawSection] = None
+    syncactivity: Optional[RawSection] = None
+    asyncactivity: Optional[RawSection] = None
     own_red_flags_details: Optional[RawSection] = None
 
 

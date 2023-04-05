@@ -1,0 +1,5 @@
+#
+# Settings for Local Development
+#
+domain: localhost
+enableAuthentication: false

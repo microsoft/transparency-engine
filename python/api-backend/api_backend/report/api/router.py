@@ -3,9 +3,11 @@
 # Licensed under the MIT license. See LICENSE file in the project.
 #
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 
 from api_backend.report.api.get_report import get_report
+from api_backend.report.api.get_report_score import get_report_score
+from api_backend.report.api.get_report_url import get_report_url
 
 report_router = APIRouter()
 
@@ -15,6 +17,16 @@ async def main():
     return {"message": "report api is healthy"}
 
 
-@report_router.get("/")
-async def report(id=Query(None)):
+@report_router.get("/score/{id}")
+async def report_score(id):
+    return await get_report_score(id)
+
+
+@report_router.get("/url/{id}")
+async def report_url(id):
+    return await get_report_url(id)
+
+
+@report_router.get("/{id}")
+async def report(id):
     return await get_report(id)

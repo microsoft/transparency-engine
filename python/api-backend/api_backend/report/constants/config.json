@@ -1,0 +1,162 @@
+{
+  "entity_report_intro": {
+    "title": "ENTITY REPORT",
+    "intro": "This Transparency Engine report illustrates how risks or opportunities may transfer to an entity of interest via its network of closely related entities. Close relationships between pairs of entities are determined through statistical analysis of shared attributes and activity, while review flags (\"red flag\" risks or \"green flag\" opportunities) are provided as data inputs."
+  },
+  "attributesummary": {
+    "id": "",
+    "title": "Entity overview",
+    "intro": "Summary of attributes associated with the target entity in the input data.",
+    "attribute_mapping": {
+      "attribute_counts": {
+        "title": "Attribute Counts",
+        "intro": "",
+        "type": "count",
+        "format": "table",
+        "columns": ["Attribute", "Count"],
+        "data": []
+      },
+      "attribute_values": {
+        "title": "Attribute Values",
+        "intro": "",
+        "type": "list",
+        "format": "table",
+        "columns": ["Attribute", "Value"],
+        "data": []
+      }
+    }
+  },
+  "flagsummary": {
+    "title": "Review flag summary",
+    "intro": "Summary of review flags associated with the target entity and its broader network of closely-related entities.",
+
+    "attribute_mapping": {
+      "attribute_counts": {
+        "title": "",
+        "intro": "",
+        "type": "count-percent-rank",
+        "format": "table",
+        "columns": ["Measures", "Count", "Percent rank"],
+        "data": []
+      }
+    }
+  },
+  "activitysummary": {
+    "title": "Activity summary",
+    "intro": "Summary of activity-based similarities with other entities performing similar actions over time.",
+    "attribute_mapping": {
+      "attribute_counts": {
+        "title": "",
+        "intro": "",
+        "type": "count-percent-rank",
+        "format": "table",
+        "columns": ["Measures", "Count", "Percent rank"],
+        "data": []
+      }
+    }
+  },
+  "ownflags": {
+    "title": "Own review flag details",
+    "intro": "Details of the review flags associated with the target entity.",
+    "attribute_mapping": {
+      "attribute_values": {
+        "title": "Attribute Values",
+        "intro": "",
+        "type": "list",
+        "format": "table",
+        "columns": ["Flag", "Evidence"],
+        "data": []
+      }
+    }
+  },
+  "directflags": {
+    "title": "Directly-related entities with review flags",
+    "intro": "Details of entities that are directly related to the target entity and which are associated with at least one review flag.",
+    "attribute_mapping": {
+      "attribute_values": {
+        "title": "",
+        "intro": "",
+        "type": "list",
+        "format": "complex-table",
+        "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
+        "data": []
+      }
+    }
+  },
+  "indirectflags": {
+    "title": "Indirectly-related entities with review flags",
+    "intro": "The following are entities that are indirectly related to the target entity and carry at least one review flag",
+    "attribute_mapping": {
+      "attribute_values": {
+        "title": "",
+        "intro": "",
+        "type": "flags",
+        "format": "complex-table",
+        "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
+        "data": []
+      }
+    }
+  },
+  "syncactivity": {
+    "title": "Entities with synchronous activity similarity",
+    "intro": "The following are entities that have similar activity with the target entity (i.e., performing the same actions) in the same periods.",
+    "attribute_mapping": {
+      "attribute_counts": {
+        "title": "Summary of shared activity",
+        "intro": "",
+        "type": "count-percent",
+        "format": "table",
+        "columns": ["Measures", "Value"],
+        "data": []
+      },
+
+      "attribute_values": {
+        "title": "",
+        "intro": "",
+        "type": "flags",
+        "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
+        "format": "complex-table",
+        "data": []
+      },
+      "attribute_charts": {
+        "title": "",
+        "intro": "",
+        "type": "list",
+        "format": "chart",
+        "data": []
+      }
+    }
+  },
+  "asyncactivity": {
+    "title": "Entities with asynchronous activity similarity",
+
+    "intro": "The following are entities that have similar activity with the target entity (i.e., performing the same actions) in different periods.",
+    "attribute_mapping": {
+      "attribute_counts": {
+        "title": "Summary of shared activity",
+        "intro": "",
+        "type": "count-percent",
+        "format": "table",
+        "columns": ["Measures", "Value"],
+        "data": []
+      },
+
+      "attribute_values": {
+        "title": "",
+        "intro": "",
+        "type": "list",
+        "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
+        "format": "complex-table",
+        "data": []
+      },
+
+      "attribute_charts": {
+        "title": "",
+        "intro": "",
+        "type": "list",
+        "format": "chart",
+        "data": []
+      }
+    }
+  }
+}
