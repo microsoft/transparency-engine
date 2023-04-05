@@ -29,8 +29,8 @@ export const SingleChartComponent: React.FC<{
 		<Container>
 			<VegaChart
 				template={donutChartTemplate as Spec}
-				width={200}
-				height={200}
+				width={240}
+				height={260}
 				data={donutChartData}
 			/>
 

@@ -5,7 +5,7 @@
 import { useThematic } from '@thematic/react'
 import { vega } from '@thematic/vega'
 import { useEffect, useMemo } from 'react'
-import { type Spec, parse, View } from 'vega'
+import { parse, type Spec, View } from 'vega'
 
 export function useCreateView(spec: Spec, width: number, height: number): View {
 	const theme = useThematic()
