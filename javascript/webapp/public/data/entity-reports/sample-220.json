@@ -375,6 +375,16 @@
                                     "indirect_paths": 2
                                 },
                                 []
+                            ],
+                            [
+                                270,
+                                {
+                                    "direct_paths": [
+                                        "sync_activity"
+                                    ],
+                                    "indirect_paths": 2
+                                },
+                                []
                             ]
                         ]
                     },

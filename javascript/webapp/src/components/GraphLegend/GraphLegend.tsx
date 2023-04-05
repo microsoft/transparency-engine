@@ -19,9 +19,12 @@ export const GraphLegend: React.FC<GraphLegendProps> = memo(
 			<Container>
 				<Relationships />
 				<Row>
-					{types.map(([label, color]) => (
-						<Type key={`legend-row-${label}`} label={label} color={color} />
-					))}
+					<Title>Attributes</Title>
+					{types
+						.filter((t) => t[0] !== 'EntityID' && t[0] !== 'entity')
+						.map(([label, color]) => (
+							<Type key={`legend-row-${label}`} label={label} color={color} />
+						))}
 				</Row>
 			</Container>
 		)
@@ -29,9 +32,11 @@ export const GraphLegend: React.FC<GraphLegendProps> = memo(
 )
 
 const Type = ({ label, color }: { label: string; color?: string }) => {
+	const theme = useThematic()
+	const stroke = theme.application().background().hex()
 	return (
 		<Node>
-			<Color color={color} />
+			<Circle fill={color} stroke={stroke} size={11} />
 			<Label>{label}</Label>
 		</Node>
 	)
@@ -40,11 +45,12 @@ const Type = ({ label, color }: { label: string; color?: string }) => {
 const Relationships = () => {
 	const theme = useThematic()
 	const warn = theme.application().error().hex()
-	const fill = theme.application().lowContrast().hex()
+	const fill = theme.process().fill().hex()
 	const stroke = theme.application().background().hex()
 	const bold = theme.rule().stroke().hex()
 	return (
 		<Row>
+			<Title>Entities</Title>
 			<Node>
 				<Diamond fill={fill} stroke={bold} strokeWidth={3} size={20} />
 				<Label>target</Label>
@@ -52,10 +58,6 @@ const Relationships = () => {
 			<Node>
 				<Circle fill={fill} stroke={stroke} size={21} />
 				<Label>related</Label>
-			</Node>
-			<Node>
-				<Circle fill={fill} stroke={stroke} size={11} />
-				<Label>attribute</Label>
 			</Node>
 			<Node>
 				<Circle fill={fill} stroke={warn} strokeWidth={3} size={22} />
@@ -72,22 +74,22 @@ const Container = styled.div`
 	justify-content: space-between;
 `
 
+const Title = styled.div`
+	font-size: 0.7em;
+	font-weight: bold;
+	color: ${({ theme }: { theme: ITheme }) => theme.palette.neutralTertiary};
+`
+
 const Row = styled.div`
 	display: flex;
 	gap: 8px;
+	align-items: center;
 `
 
 const Node = styled.div`
 	display: flex;
 	gap: 4px;
 	align-items: center;
-`
-
-const Color = styled.div<{ color?: string }>`
-	width: 10px;
-	height: 10px;
-	border-radius: 2px;
-	background-color: ${({ color }) => color};
 `
 
 const Label = styled.div`

@@ -20,7 +20,7 @@ export async function getRelatedEntityGraph(
 ): Promise<GraphData> {
 	const url = !entityId.toLowerCase().includes('sample')
 		? `api/entities/graph/${entityId}?target=${relatedId}`
-		: `data/related-entity-graphs/${entityId}.json`
+		: `data/related-entity-graphs/${entityId}-${relatedId}.json`
 	return fetch(url).then((res) => res.json() as Promise<GraphData>)
 }
 
