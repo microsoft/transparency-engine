@@ -10,6 +10,8 @@ variables:
   Codeql.Enabled: true
   NODE_VERSION: "16.x"
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn/cache
+  TEST_ENV_VAR: "test value"
+  DATABASE_TEST: $(db-name)
 
 stages:
   - stage: Compliance
