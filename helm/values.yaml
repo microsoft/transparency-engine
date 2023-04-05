@@ -94,6 +94,8 @@ applicationGroups:
           #   accessible within the cluster
           - name: FORWARDED_ALLOW_IPS
             value: "*"
+          - name: Test_env_DB
+            value: $(db-name)
 
       - name: redis
         image: "{{ .Values.redisImage }}"
