@@ -9,6 +9,7 @@ import os
 from api_backend.report.constants.report_data_mapping import report_data_mapping
 
 constants_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "constants"))
+no_results_message = "No available results for attribute "
 
 
 def build_report(id, raw_report, entity_details, activity):
@@ -47,14 +48,20 @@ def section_builder(id, section_template, report_data_mapping, args):
     if attribute_counts is not None:
         data = get_attribute_data(attribute_counts, args)
         section_template["attribute_mapping"]["attribute_counts"]["data"] = data
+        if not data:
+            section_template["attribute_mapping"]["attribute_counts"]["intro"] = f"{no_results_message} counts"
 
     if attribute_values is not None:
         data = get_attribute_data(attribute_values, args)
         section_template["attribute_mapping"]["attribute_values"]["data"] = data
+        if not data:
+            section_template["attribute_mapping"]["attribute_values"]["intro"] = f"{no_results_message} values"
 
     if attribute_charts is not None:
         data = get_attribute_data(attribute_charts, args)
         section_template["attribute_mapping"]["attribute_charts"]["data"] = data
+        if not data:
+            section_template["attribute_mapping"]["attribute_charts"]["intro"] = f"{no_results_message} charts"
 
     return section_template
 
