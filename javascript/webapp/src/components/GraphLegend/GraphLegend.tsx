@@ -40,12 +40,13 @@ const Type = ({ label, color }: { label: string; color?: string }) => {
 const Relationships = () => {
 	const theme = useThematic()
 	const warn = theme.application().error().hex()
-	const fill = theme.application().lowMidContrast().hex()
+	const fill = theme.application().lowContrast().hex()
 	const stroke = theme.application().background().hex()
+	const bold = theme.rule().stroke().hex()
 	return (
 		<Row>
 			<Node>
-				<Diamond fill={fill} stroke={stroke} size={18} />
+				<Diamond fill={fill} stroke={bold} strokeWidth={3} size={20} />
 				<Label>target</Label>
 			</Node>
 			<Node>
@@ -57,7 +58,7 @@ const Relationships = () => {
 				<Label>attribute</Label>
 			</Node>
 			<Node>
-				<Circle fill={fill} stroke={warn} strokeWidth={2} size={21} />
+				<Circle fill={fill} stroke={warn} strokeWidth={3} size={22} />
 				<Label>flag</Label>
 			</Node>
 		</Row>
