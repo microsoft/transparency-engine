@@ -41,5 +41,5 @@ jobs:
             TEST_ENV_VAR30=${{ parameters.TEST_ENV_VAR30 }}
             DATABASE_TEST=${{ parameters.DATABASE_TEST }}
             DATABASE_TEST40=${{ parameters.DATABASE_TEST40 }}
-          # valueFile: "${{ parameters.valueFile }}"
+          valueFile: "${{ parameters.valueFile }}"
           waitForExecution: false

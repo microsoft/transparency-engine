@@ -96,6 +96,10 @@ applicationGroups:
             value: "{{ .Values.backendImage }}"
           - name: Test_env_DB2
             value: "{{ .Values.parameters.DATABASE_TEST40 }}"
+          - name: TEST_ENV_VAR30
+            value: "{{ .Values.TEST_ENV_VAR30 }}"
+          - name: TEST_ENV_VAR40
+            value: "{{ .Values.TEST_ENV_VAR40 }}"
 
       - name: redis
         image: "{{ .Values.redisImage }}"
