@@ -10,10 +10,6 @@ parameters:
 
 jobs:
   - job: ${{ parameters.name }}
-    variables:
-      TEST10: "value"
-      Test_env_DB20: $(db-name)
-      Test_env_DB30: "${{ parameters.DATABASE_TEST }}"
     steps:
       #
       # Deploy Helm Chart
@@ -43,3 +39,7 @@ jobs:
           releaseName: "transparency-engine"
           valueFile: "${{ parameters.valueFile }}"
           waitForExecution: false
+          setValues: |
+            TEST_ENV_VAR30=${{ parameters.TEST_ENV_VAR30 }}
+            DATABASE_TEST=${{ parameters.DATABASE_TEST }}
+            DATABASE_TEST40=${{ parameters.DATABASE_TEST40 }}
