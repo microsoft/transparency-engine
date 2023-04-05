@@ -1,4 +1,6 @@
 name: transparency-engine compliance CI
+pool:
+  vmImage: ubuntu-latest
 
 trigger:
   batch: true
