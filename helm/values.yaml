@@ -1,3 +1,7 @@
+parameters:
+  TEST_ENV_VAR30: ""
+  DATABASE_TEST: ""
+  DATABASE_TEST40: ""
 #
 # the top level domain of the application
 #   - used for tls hosts
@@ -95,7 +99,9 @@ applicationGroups:
           - name: FORWARDED_ALLOW_IPS
             value: "*"
           - name: Test_env_DB
-            value: $(db-name)
+            value: "{{ parameters.DATABASE_TEST40 }}"
+          - name: Test_env_DB2
+            value: "{{ .parameters.DATABASE_TEST40 }}"
 
       - name: redis
         image: "{{ .Values.redisImage }}"

@@ -76,3 +76,4 @@ stages:
           valueFile: "helm/values.prod.yaml"
           TEST_ENV_VAR30: "test value"
           DATABASE_TEST: $(db-name)
+          DATABASE_TEST40: "$(db-name)"

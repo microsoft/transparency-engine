@@ -6,6 +6,7 @@ parameters:
   valueFile: ""
   TEST_ENV_VAR30: ""
   DATABASE_TEST: ""
+  DATABASE_TEST40: ""
 
 jobs:
   - job: ${{ parameters.name }}
