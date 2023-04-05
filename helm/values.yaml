@@ -92,6 +92,10 @@ applicationGroups:
             value: "{{ .Values.DB_NAME }}"
           - name: SQL_ENDPOINT
             value: "{{ .Values.SQL_ENDPOINT }}"
+          - name: SQL_USERNAME
+            value: "{{ .Values.SQL_USERNAME }}"
+          - name: SQL_PASSWORD
+            value: "{{ .Values.SQL_PASSWORD }}"
 
       - name: redis
         image: "{{ .Values.redisImage }}"
