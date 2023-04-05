@@ -1,7 +1,3 @@
-parameters:
-  TEST_ENV_VAR30: ""
-  DATABASE_TEST: ""
-  DATABASE_TEST40: ""
 #
 # the top level domain of the application
 #   - used for tls hosts
@@ -82,7 +78,7 @@ applicationGroups:
         servicePort: 8081
         path: /api
         env:
-          - name: REDIS_URL
+          - name: REDIS_URLL
             value: redis://redis:6379/0
           - name: STORAGE
             value: /data/
@@ -92,14 +88,6 @@ applicationGroups:
           #   accessible within the cluster
           - name: FORWARDED_ALLOW_IPS
             value: "*"
-          - name: Test_env_BEImg
-            value: "{{ .Values.backendImage }}"
-          - name: Test_env_DB2
-            value: "{{ .Values.parameters.DATABASE_TEST40 }}"
-          - name: TEST_ENV_VAR30
-            value: "{{ .Values.TEST_ENV_VAR30 }}"
-          - name: TEST_ENV_VAR40
-            value: "{{ .Values.TEST_ENV_VAR40 }}"
 
       - name: redis
         image: "{{ .Values.redisImage }}"
