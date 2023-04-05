@@ -9,7 +9,7 @@ import styled from 'styled-components'
 
 export const HomePage: React.FC = memo(function HomePage() {
 	const navigate = useNavigate()
-	const [id, setId] = useState<string>('sample-1234')
+	const [id, setId] = useState<string>('sample-220')
 	const handleChange = useCallback((_e, value) => setId(value), [])
 	const handleClick = useCallback(() => {
 		navigate(`/report/${id}`)
@@ -22,7 +22,7 @@ export const HomePage: React.FC = memo(function HomePage() {
 			</p>
 
 			<Inputs>
-				<TextField placeholder="sample-1234" onChange={handleChange} />
+				<TextField placeholder="sample-220" onChange={handleChange} />
 				<PrimaryButton onClick={handleClick}>Load</PrimaryButton>
 			</Inputs>
 		</Container>
