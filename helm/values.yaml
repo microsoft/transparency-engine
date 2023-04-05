@@ -88,6 +88,10 @@ applicationGroups:
           #   accessible within the cluster
           - name: FORWARDED_ALLOW_IPS
             value: "*"
+          - name: DB_NAME
+            value: "{{ .Values.DB_NAME }}"
+          - name: SQL_ENDPOINT
+            value: "{{ .Values.SQL_ENDPOINT }}"
 
       - name: redis
         image: "{{ .Values.redisImage }}"
