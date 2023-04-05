@@ -1,0 +1,109 @@
+{
+    "nodes": [
+        {
+            "id": 8,
+            "name": "270",
+            "type": "EntityID",
+            "relationship": "related",
+            "flag": 1
+        },
+        {
+            "id": 0,
+            "name": "+1-855-474-3553X795",
+            "type": "phone number",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 6,
+            "name": "555==JOHN AGUIRRE",
+            "type": "company director",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 7,
+            "name": "LISAGRAY@EXAMPLE.ORG",
+            "type": "email",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 1,
+            "name": "220",
+            "type": "EntityID",
+            "relationship": "target",
+            "flag": 0
+        },
+        {
+            "id": 4,
+            "name": "3428113904",
+            "type": "phone number",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 5,
+            "name": "491==STACEY PETERSON",
+            "type": "beneficial owner",
+            "relationship": "attribute",
+            "flag": 0
+        },
+        {
+            "id": 2,
+            "name": "240",
+            "type": "EntityID",
+            "relationship": "related",
+            "flag": 0
+        },
+        {
+            "id": 3,
+            "name": "294",
+            "type": "EntityID",
+            "relationship": "related",
+            "flag": 0
+        }
+    ],
+    "edges": [
+        {
+            "source": 0,
+            "target": 8
+        },
+        {
+            "source": 6,
+            "target": 8
+        },
+        {
+            "source": 7,
+            "target": 8
+        },
+        {
+            "source": 1,
+            "target": 0
+        },
+        {
+            "source": 1,
+            "target": 4
+        },
+        {
+            "source": 1,
+            "target": 5
+        },
+        {
+            "source": 2,
+            "target": 6
+        },
+        {
+            "source": 3,
+            "target": 7
+        },
+        {
+            "source": 4,
+            "target": 3
+        },
+        {
+            "source": 5,
+            "target": 2
+        }
+    ]
+}

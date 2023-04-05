@@ -6,10 +6,10 @@ import { useMemo } from 'react'
 
 import type { RelatedEntityActivity, TargetEntityActivity } from '../types.js'
 
-export interface QuarterlyActivityEntry {
+export interface TimedActivityEntry {
 	position: number
 	value: number
-	quarter: string
+	time: string
 }
 
 /**
@@ -20,31 +20,31 @@ export interface QuarterlyActivityEntry {
 export function useBarChartData(
 	target: TargetEntityActivity,
 	related: RelatedEntityActivity,
-): QuarterlyActivityEntry[] {
+): TimedActivityEntry[] {
 	return useMemo(() => {
-		const result: QuarterlyActivityEntry[] = []
+		const result: TimedActivityEntry[] = []
 
-		const quarters = new Set<string>()
+		const times = new Set<string>()
 
 		target.value.forEach((targetElement) => {
-			quarters.add(targetElement.time)
+			times.add(targetElement.time)
 		})
 
 		related.activity.forEach((relatedElement) => {
-			quarters.add(relatedElement.time)
+			times.add(relatedElement.time)
 		})
 
-		for (const quarter of quarters) {
+		for (const time of times) {
 			let targetCounter = 0
 			let relatedCounter = 0
 			let sharedCounter = 0
 
 			target.value.forEach((targetElement) => {
 				//means is target only
-				if (targetElement.time === quarter) {
+				if (targetElement.time === time) {
 					if (
 						related.activity.find(
-							(e) => e.value === targetElement.value && e.time === quarter,
+							(e) => e.value === targetElement.value && e.time === time,
 						) === undefined
 					) {
 						targetCounter++
@@ -54,10 +54,10 @@ export function useBarChartData(
 
 			related.activity.forEach((relatedElement) => {
 				//means is related only
-				if (relatedElement.time === quarter) {
+				if (relatedElement.time === time) {
 					if (
 						target.value.find(
-							(e) => e.value === relatedElement.value && e.time === quarter,
+							(e) => e.value === relatedElement.value && e.time === time,
 						) === undefined
 					) {
 						relatedCounter++
@@ -65,10 +65,8 @@ export function useBarChartData(
 				}
 			})
 
-			if (target.value.filter((e) => e.time === quarter).length !== undefined) {
-				const resultNumber = target.value.filter(
-					(e) => e.time === quarter,
-				).length
+			if (target.value.filter((e) => e.time === time).length !== undefined) {
+				const resultNumber = target.value.filter((e) => e.time === time).length
 
 				sharedCounter = resultNumber - targetCounter
 			} else {
@@ -76,12 +74,12 @@ export function useBarChartData(
 			}
 
 			result.push(
-				{ position: 0, value: targetCounter, quarter: quarter },
-				{ position: 1, value: relatedCounter, quarter: quarter },
-				{ position: 2, value: sharedCounter, quarter: quarter },
+				{ position: 0, value: targetCounter, time },
+				{ position: 1, value: relatedCounter, time },
+				{ position: 2, value: sharedCounter, time },
 			)
 		}
 
-		return result
+		return result.sort((a, b) => a.time.localeCompare(b.time))
 	}, [target, related])
 }

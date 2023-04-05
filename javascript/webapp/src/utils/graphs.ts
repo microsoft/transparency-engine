@@ -53,13 +53,20 @@ export function addGraphEncodings(data: GraphData, theme: Theme): GraphData {
 	}
 }
 
+// only create the colors map once, so all graphs match.
+// TODO: this could be in context instead of a module var for better control
+const colors = new Map<string, string>()
+
 function getCategoricalColors(data: GraphData, theme: Theme) {
 	const types = new Set<string>(data?.nodes.map((node) => node.type))
 	const nominal = theme.scales().nominal(10)
-	const colors = new Map<string, string>()
-	Array.from(types).forEach((category, index) => {
-		colors.set(category, nominal(index).hex())
-	})
+	// capture a couple of variants for the entity type
 	colors.set('entity', theme.process().fill().hex())
+	colors.set('EntityID', theme.process().fill().hex())
+	Array.from(types).forEach((category, index) => {
+		if (!colors.has(category)) {
+			colors.set(category, nominal(index).hex())
+		}
+	})
 	return colors
 }

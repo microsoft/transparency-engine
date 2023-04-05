@@ -16,16 +16,15 @@ export const EvidenceCellContent: React.FC<EvidenceCellContentProps> = ({
 	<Container>
 		{evidence.map((evidence, index) => (
 			<EvidenceRow key={`flag-cell${index}`}>
-				{typeof evidence === 'string' &&
-					(<Value>{evidence}</Value>)
-				}
+				{typeof evidence === 'string' && <Value>{evidence}</Value>}
 
-				{typeof evidence !== 'string' && Object.entries(evidence).map(([key, value], eidx) => (
-					<EvidenceEntry key={`evidence-entry-${eidx}`}>
-						<EvidenceKey>{key}</EvidenceKey>
-						<Value>{value}</Value>
-					</EvidenceEntry>
-				))}
+				{typeof evidence !== 'string' &&
+					Object.entries(evidence).map(([key, value], eidx) => (
+						<EvidenceEntry key={`evidence-entry-${eidx}`}>
+							<EvidenceKey>{key}</EvidenceKey>
+							<Value>{value}</Value>
+						</EvidenceEntry>
+					))}
 			</EvidenceRow>
 		))}
 	</Container>

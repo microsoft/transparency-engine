@@ -19,9 +19,7 @@ export const AttributeValuesListRow: React.FC<AttributeValuedListRowProps> = ({
 		<Td>
 			<Rows>
 				{row[1].map((value, index) => (
-					<Row key={`list-cell${index}`}>
-						{value}
-					</Row>
+					<Row key={`list-cell${index}`}>{value}</Row>
 				))}
 			</Rows>
 		</Td>

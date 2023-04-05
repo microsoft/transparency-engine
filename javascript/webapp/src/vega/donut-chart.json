@@ -2,7 +2,6 @@
 	"$schema": "https://vega.github.io/schema/vega/v5.json",
 	"description": "A basic donut chart example.",
 	"autosize": "none",
-
 	"signals": [
 		{
 			"name": "startAngle",
@@ -53,8 +52,20 @@
 		}
 	],
 
+	"legends": [
+		{
+			"orient": "none",
+			"fill": "color",
+			"direction": "horizontal",
+			"strokeColor": "none",
+			"legendY": 240,
+			"legendX": 8
+		}
+	],
+
 	"marks": [
 		{
+			"name": "arcs",
 			"type": "arc",
 			"from": { "data": "chart-data" },
 			"encode": {
@@ -68,8 +79,26 @@
 					"endAngle": { "field": "endAngle" },
 					"padAngle": { "signal": "padAngle" },
 					"innerRadius": { "signal": "innerRadius" },
-					"outerRadius": { "signal": "width / 2" },
+					"outerRadius": { "signal": "(width - 30) / 2" },
 					"cornerRadius": { "signal": "cornerRadius" }
+				}
+			}
+		},
+		{
+			"type": "text",
+			"from": { "data": "arcs" },
+			"encode": {
+				"enter": {
+					"x": { "field": "x" },
+					"y": { "field": "y" },
+					"radius": { "value": 80 },
+					"theta": {
+						"signal": "((datum.endAngle - datum.startAngle) / 2) + datum.startAngle"
+					},
+					"align": { "value": "center" },
+					"baseline": { "value": "middle" },
+					"text": { "field": "datum.field" },
+					"fontWeight": { "value": "bold" }
 				}
 			}
 		}
