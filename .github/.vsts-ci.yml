@@ -74,6 +74,8 @@ stages:
           aksClusterName: "$(aks-cluster-name)"
           aksResourceGroup: "$(aks-resource-group)"
           valueFile: "helm/values.prod.yaml"
-          TEST_ENV_VAR30: "test value"
-          DATABASE_TEST: $(db-name)
-          DATABASE_TEST40: "$(db-name)"
+          DB_NAME: $(db-name)          
+          SQL_ENDPOINT: $(sql-endpoint)
+          SQL_USERNAME: $(sql-username)
+          SQL_PASSWORD: $(sql-password)
+

@@ -4,9 +4,10 @@ parameters:
   aksClusterName: ""
   aksResourceGroup: ""
   valueFile: ""
-  TEST_ENV_VAR30: ""
-  DATABASE_TEST: ""
-  DATABASE_TEST40: ""
+  DB_NAME: ""
+  SQL_ENDPOINT: "" 
+  SQL_USERNAME: ""
+  SQL_PASSWORD: ""
 
 jobs:
   - job: ${{ parameters.name }}
@@ -37,6 +38,6 @@ jobs:
           chartType: FilePath
           chartPath: "helm"
           releaseName: "transparency-engine"
-          arguments: --set DATABASE_TEST40=${{ parameters.DATABASE_TEST40 }} --set DATABASE_TEST=${{ parameters.DATABASE_TEST }} --set TEST_ENV_VAR30=${{ parameters.TEST_ENV_VAR30 }}
           valueFile: "${{ parameters.valueFile }}"
+          arguments: --set DB_NAME=${{ parameters.DB_NAME }} --set SQL_ENDPOINT=${{ parameters.SQL_ENDPOINT }}
           waitForExecution: false
