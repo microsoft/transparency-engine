@@ -39,5 +39,5 @@ jobs:
           chartPath: "helm"
           releaseName: "transparency-engine"
           valueFile: "${{ parameters.valueFile }}"
-          arguments: --set DB_NAME=${{ parameters.DB_NAME }} --set SQL_ENDPOINT=${{ parameters.SQL_ENDPOINT }}
+          arguments: --set env.DB_NAME=${{ parameters.DB_NAME }},env.SQL_ENDPOINT=${{ parameters.SQL_ENDPOINT }}
           waitForExecution: false
