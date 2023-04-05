@@ -1,4 +1,6 @@
 name: transparency-engine compliance CI
+pool:
+  vmImage: ubuntu-latest
 
 trigger:
   batch: true
@@ -72,3 +74,8 @@ stages:
           aksClusterName: "$(aks-cluster-name)"
           aksResourceGroup: "$(aks-resource-group)"
           valueFile: "helm/values.prod.yaml"
+          DB_NAME: $(db-name)          
+          SQL_ENDPOINT: $(sql-endpoint)
+          SQL_USERNAME: $(sql-username)
+          SQL_PASSWORD: $(sql-password)
+

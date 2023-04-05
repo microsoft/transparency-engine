@@ -61,12 +61,6 @@ enableAuthentication: true
 #
 nParallelJobsPerBackendWorker: 2
 
-
-myConfig:
-  pipelineVariable: myPipelineVariable
-  pipelineVariable2: myPipelineVariable2
-  existingConfigMap: my-config
-
 #
 # application services grouped by ingress
 #
@@ -94,6 +88,26 @@ applicationGroups:
           #   accessible within the cluster
           - name: FORWARDED_ALLOW_IPS
             value: "*"
+          - name: DB_NAME
+            value: "{{ .Values.DB_NAME }}"
+          - name: SQL_ENDPOINT
+            value: "{{ .Values.SQL_ENDPOINT }}"
+          - name: SQL_USERNAME
+            value: "{{ .Values.SQL_USERNAME }}"
+          - name: SQL_PASSWORD
+            value: "{{ .Values.SQL_PASSWORD }}"
+          - name: ENTITY_TABLE
+            value: "entity_attributes_report"
+          - name: REPORT_TABLE
+            value: "html_report"
+          - name: GRAPH_TABLE
+            value: "entity_graph_report"
+          - name: ACTIVITY_TABLE
+            value: "entity_activity_report"
+          - name: REPORT_URL_TABLE
+            value: "report_url"
+          - name: NETWORK_SCORING_TABLE
+            value: "network_scoring"
 
       - name: redis
         image: "{{ .Values.redisImage }}"

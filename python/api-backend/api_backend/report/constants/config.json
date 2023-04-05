@@ -62,7 +62,7 @@
       "attribute_values": {
         "title": "Attribute Values",
         "intro": "",
-        "type": "list",
+        "type": "flags",
         "format": "table",
         "columns": ["Flag", "Evidence"],
         "data": []
@@ -76,7 +76,7 @@
       "attribute_values": {
         "title": "",
         "intro": "",
-        "type": "list",
+        "type": "flags",
         "format": "complex-table",
         "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
         "data": []
@@ -144,7 +144,7 @@
       "attribute_values": {
         "title": "",
         "intro": "",
-        "type": "list",
+        "type": "flags",
         "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
         "format": "complex-table",
         "data": []

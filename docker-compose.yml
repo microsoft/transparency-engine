@@ -16,6 +16,16 @@ services:
       - ENABLE_CORS=http://localhost:3000
       - REDIS_URL=redis://redis:6379/0
       - STORAGE=/data
+      - DB_NAME=<DB_NAME>
+      - SQL_ENDPOINT=<SQL_ENDPOINT>
+      - SQL_USERNAME=<SQL_USERNAME>
+      - SQL_PASSWORD=<SQL_PASSWORD>
+      - ACTIVITY_TABLE=entity_activity_report
+      - ENTITY_TABLE=entity_attributes_report
+      - GRAPH_TABLE=entity_graph_report
+      - NETWORK_SCORING_TABLE=network_scoring
+      - REPORT_TABLE=html_report
+      - REPORT_URL_TABLE=report_url
     ports:
       - 8081:8081
     depends_on:
