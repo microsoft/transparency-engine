@@ -65,12 +65,6 @@ enableAuthentication: true
 #
 nParallelJobsPerBackendWorker: 2
 
-
-myConfig:
-  pipelineVariable: myPipelineVariable
-  pipelineVariable2: myPipelineVariable2
-  existingConfigMap: my-config
-
 #
 # application services grouped by ingress
 #
@@ -98,10 +92,10 @@ applicationGroups:
           #   accessible within the cluster
           - name: FORWARDED_ALLOW_IPS
             value: "*"
-          - name: Test_env_DB
-            value: "{{ parameters.DATABASE_TEST40 }}"
+          - name: Test_env_BEImg
+            value: "{{ .Values.backendImage }}"
           - name: Test_env_DB2
-            value: "{{ .parameters.DATABASE_TEST40 }}"
+            value: "{{ .Values.parameters.DATABASE_TEST40 }}"
 
       - name: redis
         image: "{{ .Values.redisImage }}"
