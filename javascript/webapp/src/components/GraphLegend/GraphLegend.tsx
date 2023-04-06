@@ -36,7 +36,7 @@ const Type = ({ label, color }: { label: string; color?: string }) => {
 	const stroke = theme.application().background().hex()
 	return (
 		<Node>
-			<Circle fill={color} stroke={stroke} size={11} />
+			<Circle fill={color || stroke} stroke={stroke} size={11} />
 			<Label>{label}</Label>
 		</Node>
 	)
