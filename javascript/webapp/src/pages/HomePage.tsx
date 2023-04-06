@@ -3,7 +3,7 @@
  * Licensed under the MIT license. See LICENSE file in the project.
  */
 import { PrimaryButton, TextField } from '@fluentui/react'
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -14,6 +14,15 @@ export const HomePage: React.FC = memo(function HomePage() {
 	const handleClick = useCallback(() => {
 		navigate(`/report/${id}`)
 	}, [navigate, id])
+	const handleKey = useCallback((e) => {
+		e.keyCode === 13 && handleClick()
+	}, [handleClick])
+	const ref = useRef<any>()
+	useEffect(() => {
+		// HACK: TextField doesn't expose regular ref properly, so we have to get the root and drilldown to the input
+		const input = ref.current.firstChild.firstChild.firstChild
+		input.focus()
+	},[])
 	return (
 		<Container>
 			<p>
@@ -22,7 +31,7 @@ export const HomePage: React.FC = memo(function HomePage() {
 			</p>
 
 			<Inputs>
-				<TextField placeholder="sample-220" onChange={handleChange} />
+				<TextField elementRef={ref} placeholder="sample-220" onChange={handleChange} onKeyUp={handleKey}/>
 				<PrimaryButton onClick={handleClick}>Load</PrimaryButton>
 			</Inputs>
 		</Container>
