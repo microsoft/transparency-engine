@@ -33,7 +33,7 @@ export const ComplexTableComponent: React.FC<{
 			<Tables>
 				{dataObject.data?.map((row, ridx) => {
 					const id = row[0] as string
-					const graph = relatedGraphs !== undefined ? relatedGraphs.get(id): undefined
+					const graph = relatedGraphs?.get(id)
 					return (
 						<TableGraphContainer key={`related-flags-${id}`}>
 							<Table>

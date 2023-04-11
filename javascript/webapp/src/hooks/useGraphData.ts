@@ -34,5 +34,6 @@ export function useGraphDataMap(
 			})
 			return transformed
 		}
+		return data
 	}, [theme, data])
 }
