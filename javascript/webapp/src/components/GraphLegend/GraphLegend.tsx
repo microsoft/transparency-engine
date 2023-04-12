@@ -48,6 +48,7 @@ const Relationships = () => {
 	const fill = theme.process().fill().hex()
 	const stroke = theme.application().background().hex()
 	const bold = theme.rule().stroke().hex()
+	
 	return (
 		<Row>
 			<Title>Entities</Title>

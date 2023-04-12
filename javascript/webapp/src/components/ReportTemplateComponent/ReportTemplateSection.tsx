@@ -25,7 +25,7 @@ import { TableComponent } from '../TableComponent/TableComponent.js'
 
 export interface ReportTemplateSectionProps {
 	section: ReportSection
-	relatedGraphs: Map<string, GraphData>
+	relatedGraphs: Map<string, GraphData> | undefined
 }
 
 // eslint can't pick up the logical assertions in the When conditions
