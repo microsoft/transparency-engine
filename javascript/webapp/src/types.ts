@@ -156,7 +156,7 @@ export enum FormatType {
 }
 
 export enum ReportType {
-	CountPercentRank = 'count-percentrank',
+	CountPercentRank = 'count-percent-rank',
 	Count = 'count',
 	List = 'list',
 	CountPercent = 'count-percent',
