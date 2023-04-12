@@ -36,15 +36,25 @@ def build_report(id, raw_report, entity_details, activity):
 
 def section_builder(id, section_template, report_data_mapping, args):
     raw_section = args.get("raw_section", None)
-    if raw_section is None:
-        return section_template
-    if section_template is None:
-        return None
-    if "id" in section_template:
-        section_template["id"] = id
     attribute_counts = report_data_mapping.get("attribute_counts", None)
     attribute_values = report_data_mapping.get("attribute_values", None)
     attribute_charts = report_data_mapping.get("attribute_charts", None)
+    if raw_section is None:
+        section_template["intro"] = no_results_message
+        if attribute_counts is not None:
+            section_template["attribute_mapping"]["attribute_counts"]["intro"] = no_results_message
+        if attribute_values is not None:
+            section_template["attribute_mapping"]["attribute_values"]["intro"] = no_results_message
+        if attribute_charts is not None:
+            section_template["attribute_mapping"]["attribute_charts"]["intro"] = no_results_message
+        return section_template
+    
+    if section_template is None:
+        return None
+    
+    if "id" in section_template:
+        section_template["id"] = id
+    
     if attribute_counts is not None:
         data = get_attribute_data(attribute_counts, args)
         section_template["attribute_mapping"]["attribute_counts"]["data"] = data
