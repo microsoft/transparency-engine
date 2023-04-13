@@ -10,6 +10,10 @@ from api_backend.report.util.util import build_related_entities_data
 
 def get_attribute_counts(raw_section):
     data = {}
+
+    if raw_section is None:
+        return []
+    
     for item in raw_section:
         entity_id = item[related]
         for key in item:
