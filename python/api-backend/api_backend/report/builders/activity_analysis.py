@@ -17,13 +17,13 @@ def get_attribute_counts(raw_section):
     for item in raw_section:
         entity_id = item[related]
         for key in item:
-            if key == related or key == link_summary:
+            if key == related or key == link_summary or "average" in key or key == "flag_count":
                 continue
             new_key = key.split("_")[0] if "score" in key else key.replace("_", " ")
             value = data.get(new_key, [])
             new_value = {
                 "entity_id": entity_id,
-                "value": round(item[key], 2),
+                "value": round(item[key] * 100, 2),
             }
             value.append(new_value)
             data[new_key] = value

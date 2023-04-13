@@ -39,17 +39,15 @@ def section_builder(id, section_template, report_data_mapping, args):
     attribute_counts = report_data_mapping.get("attribute_counts", None)
     attribute_values = report_data_mapping.get("attribute_values", None)
     attribute_charts = report_data_mapping.get("attribute_charts", None)
+
     if raw_section is None:
         section_template["intro"] = no_results_message
         if attribute_counts is not None:
-            section_template["attribute_mapping"]["attribute_counts"] = update_no_data_attributes(
-                section_template, "attribute_counts")
+            del section_template["attribute_mapping"]["attribute_counts"]
         if attribute_values is not None:
-            section_template["attribute_mapping"]["attribute_values"] = update_no_data_attributes(
-                section_template, "attribute_values")
+            del section_template["attribute_mapping"]["attribute_values"]
         if attribute_charts is not None:
-            section_template["attribute_mapping"]["attribute_charts"] = update_no_data_attributes(
-                section_template, "attribute_charts")
+            del section_template["attribute_mapping"]["attribute_charts"]
         return section_template
     
     if section_template is None:
