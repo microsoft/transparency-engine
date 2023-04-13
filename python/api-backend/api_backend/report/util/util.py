@@ -47,6 +47,10 @@ def build_count_percent_rank_data(
     report_section: RawSection, attribute_mapping: Optional[Dict[str, str]] = None
 ) -> List[CountPercentRank]:
     data: List[CountPercentRank] = []
+    
+    if report_section is None:
+        return data
+
     for key in report_section:
         pct_rank = report_section.get(key + "_pct", None)
         if not "_pct" in key and pct_rank and (attribute_mapping is None or key in attribute_mapping):
@@ -60,6 +64,9 @@ def build_count_percent_rank_data(
 
 def build_related_entities_data(report_section: List[RawSection]) -> List[RelatedEntityActivity]:
     data: List[RelatedEntityActivity] = []
+    
+    if report_section is None:
+        return data
 
     for item in report_section:
         relationship_paths = RelationshipPaths(direct_paths=[], indirect_paths=0)
@@ -82,6 +89,8 @@ def build_related_entities_data(report_section: List[RawSection]) -> List[Relate
 
 def get_review_flags(review_flag_details: List[RawReviewFlag]) -> List[ReviewFlag]:
     review_flags: List[ReviewFlag] = []
+    if review_flag_details is None:
+        return review_flags
     for rf in review_flag_details:
         review_flag = ReviewFlag(
             flag=rf.get(flag, ""),
