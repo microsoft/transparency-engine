@@ -37,7 +37,6 @@ const GRAPH_HEIGHT = 500
 /*eslint-disable @typescript-eslint/no-non-null-assertion*/
 export const EntityReportPage: React.FC = memo(function EntityReportPage() {
 	const { entityId } = useParams()
-	console.log('EntityID =>', entityId)
 	const report = useEntityReport(entityId)
 	const graph = useEntityGraph(entityId)
 	const relatedGraphs = useRelatedEntityGraphs(report)
