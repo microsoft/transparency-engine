@@ -12,9 +12,7 @@ export const Router: React.FC = function Router() {
 	return (
 		<Routes>
 			<Route path={'/'} element={<HomePage />} />
-			{/* <Route path={'/report/:entityId'} element={<EntityReportPage />} /> */}
-			<Route path={'/report/:entityId/*'} element={<EntityReportPage />} />
-			<Route path="*" element={<EntityReportPage />} />
+			<Route path={'/report/:entityId'} element={<EntityReportPage />} />
 		</Routes>
 	)
 }
