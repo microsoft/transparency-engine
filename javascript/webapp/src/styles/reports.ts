@@ -23,6 +23,7 @@ export const SubsectionTitle = styled.h3`
 `
 
 export const IntroId = styled.div`
+	padding-top: 20px;
 	font-weight: bold;
 	color: ${({ theme }: { theme: ITheme }) => theme.palette.neutralSecondary};
 `

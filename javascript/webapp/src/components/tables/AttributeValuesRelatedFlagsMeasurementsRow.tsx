@@ -73,10 +73,11 @@ const FlagsColumn = styled(FlexColumn)`
 	gap: 20px;
 `
 
-const MeasureContainer = styled(FlexColumn)`
+const MeasureContainer = styled.div`
 	gap: 8px;
 	display: flex;
 `
 
 const MeasureValue = styled.div`
+	display: inline-block;
 `

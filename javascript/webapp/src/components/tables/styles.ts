@@ -52,6 +52,7 @@ export const Divider = styled.div`
 `
 
 export const MeasureName = styled.div`
+	display: inline-block;
 	font-weight: bold;
 	color: ${({ theme }: { theme: ITheme }) => theme.palette.neutralSecondary};
 	&:after {
