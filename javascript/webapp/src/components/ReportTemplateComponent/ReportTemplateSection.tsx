@@ -15,6 +15,7 @@ import {
 	AttributeBlock,
 	ComplexMeasurementsTableAttribute,
 	ComplexTableAttribute,
+	ActivityAttribute,
 	GraphData,
 	ReportSection,
 	ReportType,

@@ -30,7 +30,7 @@ import { SingleChartComponent } from '../SingleChartComponent/SingleChartCompone
 
 export const ComplexTableComponent: React.FC<{
 	dataObject: AttributeBlock<ComplexTableAttribute | ComplexMeasurementsTableAttribute>
-	type: ReportType
+	type: ReportType | undefined
 	chartData: AttributeBlock<ActivityAttribute> | undefined 
 	relatedGraphs: Map<string, GraphData> | undefined
 }> = memo(function ComplexTableComponent({ dataObject, type, chartData, relatedGraphs }) {
@@ -51,7 +51,7 @@ export const ComplexTableComponent: React.FC<{
 					return (
 						<TableGraphContainer key={`related-flags-${id}`}>
 
-							<IntroId>{dataObject.columns[0]}:{row[0]}</IntroId>
+							<IntroId>{dataObject?.columns[0]}:{row[0]}</IntroId>
 
 							{graph && (
 								<GraphComponent
