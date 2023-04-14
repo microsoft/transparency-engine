@@ -5,7 +5,7 @@
 
 
 from api_backend.report.constants.attributes import link_summary, related
-from api_backend.report.util.util import build_related_entities_data
+from api_backend.report.util.util import build_activity_values_data
 
 
 def get_attribute_counts(raw_section):
@@ -13,7 +13,7 @@ def get_attribute_counts(raw_section):
 
     if raw_section is None:
         return []
-    
+
     for item in raw_section:
         entity_id = item[related]
         for key in item:
@@ -31,7 +31,7 @@ def get_attribute_counts(raw_section):
 
 
 def get_attribute_values(raw_section):
-    return build_related_entities_data(raw_section)
+    return build_activity_values_data(raw_section)
 
 
 def get_attribute_charts(activity):
