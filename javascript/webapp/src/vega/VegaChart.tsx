@@ -47,5 +47,4 @@ const Description = styled.div`
 	font-size: 0.6em;
 	padding-left: 5px;
 	width: 95%;
-	
 `
