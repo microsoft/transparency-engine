@@ -18,11 +18,13 @@ export const VegaChart: React.FC<{
 	template: Spec
 	width: number
 	height: number
-}> = memo(function VegaChart({ data, template, width, height }) {
+	description: string
+}> = memo(function VegaChart({ data, template, width, height, description }) {
 	const spec = useOverlay(data, template)
 	return (
 		<Container>
 			<VegaHost spec={spec} width={width} height={height} />
+			<Description>{description}</Description>
 		</Container>
 	)
 })
@@ -39,4 +41,11 @@ function useOverlay(data: any[] | undefined, template: Spec): Spec {
 const Container = styled.div`
 	display: inline-block;
 	flex-direction: column;
+`
+
+const Description = styled.div`
+	font-size: 0.6em;
+	padding-left: 5px;
+	width: 95%;
+	
 `

@@ -64,12 +64,6 @@
                                 ]
                             ],
                             [
-                                "EntityWeight",
-                                [
-                                    "5405957.5"
-                                ]
-                            ],
-                            [
                                 "phone",
                                 [
                                     "107-609-5431",
@@ -181,7 +175,7 @@
             },
             {
                 "title": "Own review flag details",
-                "intro": "No results reported ",
+                "intro": "No results reported.",
                 "attribute_mapping": {}
             },
             {
@@ -228,7 +222,7 @@
             },
             {
                 "title": "Indirectly-related entities with review flags",
-                "intro": "No results reported ",
+                "intro": "No results reported.",
                 "attribute_mapping": {}
             },
             {
@@ -271,7 +265,7 @@
                         "columns": [
                             "Entity ID",
                             "Relationship Paths",
-                            "Measurements"
+                            "Similarity"
                         ],
                         "format": "complex-table",
                         "data": [
@@ -286,19 +280,19 @@
                                 [
                                     {
                                         "key": "period",
-                                        "value": 28.26
+                                        "value": 28.3
                                     },
                                     {
                                         "key": "tender",
-                                        "value": 29.91
+                                        "value": 29.9
                                     },
                                     {
                                         "key": "buyer",
-                                        "value": 29.03
+                                        "value": 29
                                     },
                                     {
                                         "key": "item",
-                                        "value": 25.81
+                                        "value": 25.8
                                     }
                                 ]
                             ],
@@ -313,19 +307,19 @@
                                 [
                                     {
                                         "key": "period",
-                                        "value": 28.26
+                                        "value": 28.3
                                     },
                                     {
                                         "key": "tender",
-                                        "value": 29.91
+                                        "value": 29.9
                                     },
                                     {
                                         "key": "buyer",
-                                        "value": 29.03
+                                        "value": 29
                                     },
                                     {
                                         "key": "item",
-                                        "value": 25.81
+                                        "value": 25.8
                                     }
                                 ]
                             ]
@@ -2739,69 +2733,84 @@
                                         "entity_id": "270",
                                         "activity": [
                                             {
-                                                "time": "2022-01",
-                                                "attribute": "tender",
-                                                "value": "TENDER:806"
-                                            },
-                                            {
-                                                "time": "2022-05",
-                                                "attribute": "tender",
-                                                "value": "TENDER:1326"
-                                            },
-                                            {
-                                                "time": "2021-10",
+                                                "time": "2021-08",
                                                 "attribute": "buyer",
-                                                "value": "BUYER:674"
-                                            },
-                                            {
-                                                "time": "2021-11",
-                                                "attribute": "buyer",
-                                                "value": "BUYER:893"
+                                                "value": "BUYER:676"
                                             },
                                             {
                                                 "time": "2022-01",
                                                 "attribute": "buyer",
-                                                "value": "BUYER:1913"
+                                                "value": "BUYER:1955"
                                             },
                                             {
-                                                "time": "2022-03",
+                                                "time": "2022-02",
                                                 "attribute": "buyer",
-                                                "value": "BUYER:733"
+                                                "value": "BUYER:1993"
                                             },
                                             {
-                                                "time": "2021-11",
-                                                "attribute": "tender",
-                                                "value": "TENDER:563"
+                                                "time": "2022-04",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:1569"
                                             },
                                             {
                                                 "time": "2021-10",
                                                 "attribute": "buyer",
-                                                "value": "BUYER:1681"
-                                            },
-                                            {
-                                                "time": "2021-10",
-                                                "attribute": "buyer",
-                                                "value": "BUYER:1781"
-                                            },
-                                            {
-                                                "time": "2022-06",
-                                                "attribute": "buyer",
-                                                "value": "BUYER:2074"
+                                                "value": "BUYER:736"
                                             },
                                             {
                                                 "time": "2021-07",
                                                 "attribute": "buyer",
-                                                "value": "BUYER:677"
+                                                "value": "BUYER:783"
                                             },
                                             {
-                                                "time": "2022-07",
+                                                "time": "2022-01",
                                                 "attribute": "buyer",
-                                                "value": "BUYER:2076"
+                                                "value": "BUYER:893"
                                             },
                                             {
-                                                "time": "2021-08",
+                                                "time": "2022-04",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:1872"
+                                            },
+                                            {
+                                                "time": "2021-12",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:1869"
+                                            },
+                                            {
+                                                "time": "2021-07",
                                                 "attribute": "buyer",
                                                 "value": "BUYER:676"
+                                            },
+                                            {
+                                                "time": "2022-04",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:675"
+                                            },
+                                            {
+                                                "time": "2022-04",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:365"
+                                            },
+                                            {
+                                                "time": "2022-02",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:1994"
+                                            },
+                                            {
+                                                "time": "2022-04",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:676"
+                                            },
+                                            {
+                                                "time": "2022-02",
+                                                "attribute": "buyer",
+                                                "value": "BUYER:697"
+                                            },
+                                            {
+                                                "time": "2021-07",
+                                                "attribute": "item",
+                                                "value": "ITEM:756"
                                             },
                                             {
                                                 "time": "2021-07",
@@ -3557,8 +3566,8 @@
                 "attribute_mapping": {
                     "attribute_values": {
                         "title": "",
-                        "intro": "No results reported ",
-                        "type": "flags",
+                        "intro": "No results reported.",
+                        "type": "flags-measurements",
                         "format": "complex-table",
                         "data": []
                     },

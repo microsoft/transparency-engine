@@ -60,7 +60,7 @@ const MeasurementsCell = ({ measurements }: { measurements: FlagMeasurement[] })
 			{measurements.map((measure, fidx) => (
 				<MeasureContainer key={`flag-${fidx}`}>
 					<MeasureName>{measure.key}</MeasureName>
-					<MeasureValue>{measure.value}</MeasureValue>
+					<MeasureValue>{measure.value}%</MeasureValue>
 				</MeasureContainer>
 			))}
 		</FlagsColumn>
