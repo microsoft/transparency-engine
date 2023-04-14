@@ -101,20 +101,12 @@
     "title": "Entities with synchronous activity similarity",
     "intro": "The following are entities that have similar activity with the target entity (i.e., performing the same actions) in the same periods.",
     "attribute_mapping": {
-      "attribute_counts": {
-        "title": "Summary of shared activity",
-        "intro": "",
-        "type": "count-percent",
-        "format": "table",
-        "columns": ["Measures", "Value"],
-        "data": []
-      },
 
       "attribute_values": {
         "title": "",
         "intro": "",
         "type": "flags",
-        "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
+        "columns": ["Entity ID", "Relationship Paths", "Measurements"],
         "format": "complex-table",
         "data": []
       },
@@ -132,20 +124,12 @@
 
     "intro": "The following are entities that have similar activity with the target entity (i.e., performing the same actions) in different periods.",
     "attribute_mapping": {
-      "attribute_counts": {
-        "title": "Summary of shared activity",
-        "intro": "",
-        "type": "count-percent",
-        "format": "table",
-        "columns": ["Measures", "Value"],
-        "data": []
-      },
 
       "attribute_values": {
         "title": "",
         "intro": "",
         "type": "flags",
-        "columns": ["Entity ID", "Relationship Paths", "Review Flags"],
+        "columns": ["Entity ID", "Relationship Paths", "Measurements"],
         "format": "complex-table",
         "data": []
       },

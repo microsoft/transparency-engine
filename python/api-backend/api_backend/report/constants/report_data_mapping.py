@@ -33,7 +33,6 @@ report_data_mapping = {
     direct_flags: {"attribute_values": {"method": related_entities.get_attribute_values, "args": "raw_section"}},
     indirect_flags: {"attribute_values": {"method": related_entities.get_attribute_values, "args": "raw_section"}},
     sync_activity: {
-        "attribute_counts": {"method": activity_analysis.get_attribute_counts, "args": "raw_section"},
         "attribute_values": {"method": activity_analysis.get_attribute_values, "args": "raw_section"},
         "attribute_charts": {
             "method": activity_analysis.get_attribute_charts,
@@ -41,7 +40,6 @@ report_data_mapping = {
         },
     },
     async_activity: {
-        "attribute_counts": {"method": activity_analysis.get_attribute_counts, "args": "raw_section"},
         "attribute_values": {"method": activity_analysis.get_attribute_values, "args": "raw_section"},
         "attribute_charts": {
             "method": activity_analysis.get_attribute_charts,

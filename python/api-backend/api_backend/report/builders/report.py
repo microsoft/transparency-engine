@@ -49,32 +49,36 @@ def section_builder(id, section_template, report_data_mapping, args):
         if attribute_charts is not None:
             del section_template["attribute_mapping"]["attribute_charts"]
         return section_template
-    
+
     if section_template is None:
         return None
-    
+
     if "id" in section_template:
         section_template["id"] = id
-    
+
     if attribute_counts is not None:
         data = get_attribute_data(attribute_counts, args)
         section_template["attribute_mapping"]["attribute_counts"]["data"] = data
         if not data:
             section_template["attribute_mapping"]["attribute_counts"] = update_no_data_attributes(
-                section_template, "attribute_counts")
+                section_template, "attribute_counts"
+            )
 
     if attribute_values is not None:
         data = get_attribute_data(attribute_values, args)
         section_template["attribute_mapping"]["attribute_values"]["data"] = data
         if not data:
             section_template["attribute_mapping"]["attribute_values"] = update_no_data_attributes(
-                section_template, "attribute_values")
+                section_template, "attribute_values"
+            )
 
     if attribute_charts is not None:
         data = get_attribute_data(attribute_charts, args)
         section_template["attribute_mapping"]["attribute_charts"]["data"] = data
         if not data:
-            section_template["attribute_mapping"]["attribute_charts"] = update_no_data_attributes(section_template, "attribute_charts")
+            section_template["attribute_mapping"]["attribute_charts"] = update_no_data_attributes(
+                section_template, "attribute_charts"
+            )
 
     return section_template
 
