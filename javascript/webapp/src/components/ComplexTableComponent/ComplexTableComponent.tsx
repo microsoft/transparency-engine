@@ -51,7 +51,7 @@ export const ComplexTableComponent: React.FC<{
 					return (
 						<TableGraphContainer key={`related-flags-${id}`}>
 
-							<IntroId>{dataObject?.columns[0]}:{row[0]}</IntroId>
+							{dataObject !== undefined && dataObject.columns !== undefined && (<IntroId>{dataObject?.columns[0]}:{row[0]}</IntroId>)}
 
 							{graph && (
 								<GraphComponent
