@@ -21,6 +21,6 @@ export const AttributeCountsCountPercentRankRow: React.FC<
 	<Tr>
 		<TextCell>{row[0]}</TextCell>
 		<NumberCell>{row[1]}</NumberCell>
-		<NumberCell>{`${100 - row[2]}%`}</NumberCell>
+		<NumberCell>{`${row[2]}%`}</NumberCell>
 	</Tr>
 )

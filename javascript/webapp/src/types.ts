@@ -44,7 +44,7 @@ export interface ReportSection {
 
 export interface AttributeMapping {
 	attribute_counts?: AttributeBlock<TableAttribute>
-	attribute_values?: AttributeBlock<TableAttribute | ComplexTableAttribute>
+	attribute_values?: AttributeBlock<TableAttribute | ComplexTableAttribute | ComplexMeasurementsTableAttribute>
 	attribute_charts?: AttributeBlock<ActivityAttribute>
 }
 
@@ -66,6 +66,8 @@ export type TableAttribute = [
 ]
 
 export type ComplexTableAttribute = EntityFlagsArray
+
+export type ComplexMeasurementsTableAttribute = EntityFlagsMeasurementsArray
 
 export type AttributeCount = [string, number]
 export type AttributeCountPercentRank = [string, number, number]
@@ -102,6 +104,15 @@ export interface Paths {
 export interface Flag {
 	flag: string
 	evidence: Evidence[]
+}
+
+export type EntityFlagsMeasurementsArray = FlagMeasurementEntry[]
+
+export type FlagMeasurementEntry = [string, Paths, FlagMeasurement[]]
+
+export interface FlagMeasurement {
+	key: string
+	value: string
 }
 
 export type Evidence = Record<string, string | number>
@@ -161,4 +172,5 @@ export enum ReportType {
 	List = 'list',
 	CountPercent = 'count-percent',
 	Flags = 'flags',
+	FlagsMeasurements = 'flags-measurements'
 }

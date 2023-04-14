@@ -51,6 +51,14 @@ export const Divider = styled.div`
 	color: ${({ theme }: { theme: ITheme }) => theme.palette.neutralTertiary};
 `
 
+export const MeasureName = styled.div`
+	font-weight: bold;
+	color: ${({ theme }: { theme: ITheme }) => theme.palette.neutralSecondary};
+	&:after {
+		content: ':';
+	}
+`
+
 export const Key = styled.div`
 	font-weight: bold;
 	color: ${({ theme }: { theme: ITheme }) => theme.palette.neutralSecondary};

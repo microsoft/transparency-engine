@@ -11,15 +11,16 @@ import {
 	SectionDescription,
 	SectionTitle,
 } from '../../styles/reports.js'
-import type {
+import {
 	AttributeBlock,
+	ComplexMeasurementsTableAttribute,
 	ComplexTableAttribute,
 	GraphData,
 	ReportSection,
+	ReportType,
 	TableAttribute,
 } from '../../types.js'
 import { FormatType } from '../../types.js'
-import { ChartComponent } from '../ChartComponent/ChartComponent.js'
 import { ComplexTableComponent } from '../ComplexTableComponent/ComplexTableComponent.js'
 import { TableComponent } from '../TableComponent/TableComponent.js'
 
@@ -72,20 +73,15 @@ export const ReportTemplateSection: React.FC<ReportTemplateSectionProps> = memo(
 					>
 						<ComplexTableComponent
 							dataObject={
-								attribute_mapping.attribute_values as AttributeBlock<ComplexTableAttribute>
+								attribute_mapping.attribute_values?.type !== ReportType.FlagsMeasurements ? attribute_mapping.attribute_values as AttributeBlock<ComplexTableAttribute> : attribute_mapping.attribute_values as AttributeBlock<ComplexMeasurementsTableAttribute>
 							}
+							type={
+								attribute_mapping.attribute_values?.type
+							}
+							chartData={attribute_mapping.attribute_values?.type === ReportType.FlagsMeasurements ? attribute_mapping.attribute_charts! as AttributeBlock<ActivityAttribute> : undefined}
 							relatedGraphs={relatedGraphs}
 						/>
 					</When>
-				</When>
-
-				<When
-					condition={
-						attribute_mapping.attribute_charts !== undefined &&
-						attribute_mapping.attribute_charts.format === FormatType.Chart
-					}
-				>
-					<ChartComponent dataObject={attribute_mapping.attribute_charts!} />
 				</When>
 			</SectionContainer>
 		)
