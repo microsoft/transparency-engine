@@ -5,6 +5,7 @@
 
 import { memo } from 'react'
 import styled from 'styled-components'
+import { If, Then, Else } from 'react-if'
 
 import {
 	IntroId,
@@ -66,19 +67,22 @@ export const ComplexTableComponent: React.FC<{
 									<TableHead columns={dataObject.columns.slice(1)} />
 								)}
 								<Tbody>
-									{type !== ReportType.FlagsMeasurements && (
-										<AttributeValuesRelatedFlagsRow
-										key={`row-${ridx}`}
-										row={row}
-										/>
-									)}
 
-									{type === ReportType.FlagsMeasurements && (
-										<AttributeValuesRelatedFlagsMeasurementsRow
-										key={`row-${ridx}`}
-										row={row}
+
+								<If condition={type !== ReportType.FlagsMeasurements}>
+									<Then>
+										<AttributeValuesRelatedFlagsRow
+											key={`row-${ridx}`}
+											row={row}
 										/>
-									)}
+									</Then>
+									<Else>
+										<AttributeValuesRelatedFlagsMeasurementsRow
+											key={`row-${ridx}`}
+											row={row}
+										/>
+									</Else>
+								</If>
 								</Tbody>
 							</Table>
 
