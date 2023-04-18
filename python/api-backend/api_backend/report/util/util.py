@@ -106,25 +106,18 @@ def get_review_flags(review_flag_details: List[RawReviewFlag]) -> List[ReviewFla
 
 
 def get_measurements(report_section):
-    data = {}
+    measurements = []
 
     if report_section is None:
-        return []
+        return measurements
 
     for item in report_section:
-        entity_id = item[related]
         for key in item:
             if key == related or key == link_summary or "average" in key or key == "flag_count":
                 continue
             new_key = key.split("_")[0] if "score" in key else key.replace("_", " ")
-            value = data.get(new_key, [])
-            new_value = {
-                "entity_id": entity_id,
-                "value": round(item[key] * 100, 2),
-            }
-            value.append(new_value)
-            data[new_key] = value
-    return [{"key": key, "value": value} for key, value in data.items()]
+            measurements.append({"key": new_key, "value": round(100 * item.get(key, 0), 2)})
+    return measurements
 
 
 def build_activity_values_data(report_section: List[RawSection]):
