@@ -105,7 +105,7 @@
       "attribute_values": {
         "title": "",
         "intro": "",
-        "type": "flags",
+        "type": "flags-measurements",
         "columns": ["Entity ID", "Relationship Paths", "Measurements"],
         "format": "complex-table",
         "data": []
@@ -128,7 +128,7 @@
       "attribute_values": {
         "title": "",
         "intro": "",
-        "type": "flags",
+        "type": "flags-measurements",
         "columns": ["Entity ID", "Relationship Paths", "Measurements"],
         "format": "complex-table",
         "data": []
