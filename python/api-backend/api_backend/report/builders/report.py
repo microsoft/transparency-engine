@@ -91,7 +91,7 @@ def section_builder(id, section_template, report_data_mapping, args):
             data_mapping["attribute_charts"] = True
 
     if not any(data_mapping.values()):
-        section_template["intro"] = no_results_message
+        section_template["intro"] = ""
 
     return section_template
 
