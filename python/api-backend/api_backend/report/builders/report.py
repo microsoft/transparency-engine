@@ -9,7 +9,7 @@ import os
 from api_backend.report.constants.report_data_mapping import report_data_mapping
 
 constants_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "constants"))
-no_results_message = "No results reported "
+no_results_message = "No results reported."
 
 
 def build_report(id, raw_report, entity_details, activity):
@@ -39,6 +39,11 @@ def section_builder(id, section_template, report_data_mapping, args):
     attribute_counts = report_data_mapping.get("attribute_counts", None)
     attribute_values = report_data_mapping.get("attribute_values", None)
     attribute_charts = report_data_mapping.get("attribute_charts", None)
+    data_mapping = {
+        "attribute_counts": False,
+        "attribute_values": False,
+        "attribute_charts": False,
+    }
 
     if raw_section is None:
         section_template["intro"] = no_results_message
@@ -63,7 +68,8 @@ def section_builder(id, section_template, report_data_mapping, args):
             section_template["attribute_mapping"]["attribute_counts"] = update_no_data_attributes(
                 section_template, "attribute_counts"
             )
-
+        else:
+            data_mapping["attribute_counts"] = True
     if attribute_values is not None:
         data = get_attribute_data(attribute_values, args)
         section_template["attribute_mapping"]["attribute_values"]["data"] = data
@@ -71,6 +77,8 @@ def section_builder(id, section_template, report_data_mapping, args):
             section_template["attribute_mapping"]["attribute_values"] = update_no_data_attributes(
                 section_template, "attribute_values"
             )
+        else:
+            data_mapping["attribute_values"] = True
 
     if attribute_charts is not None:
         data = get_attribute_data(attribute_charts, args)
@@ -79,6 +87,11 @@ def section_builder(id, section_template, report_data_mapping, args):
             section_template["attribute_mapping"]["attribute_charts"] = update_no_data_attributes(
                 section_template, "attribute_charts"
             )
+        else:
+            data_mapping["attribute_charts"] = True
+
+    if not any(data_mapping.values()):
+        section_template["intro"] = no_results_message
 
     return section_template
 

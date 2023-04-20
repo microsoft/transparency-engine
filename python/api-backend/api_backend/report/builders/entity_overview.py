@@ -17,5 +17,7 @@ def get_attribute_counts(raw_section):
 def get_attribute_values(entity_details):
     data = []
     for key in entity_details:
+        if key.lower() == "entityweight":
+            continue
         data.append([key_to_title(key), entity_details[key]])
     return data
