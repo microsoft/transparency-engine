@@ -5,26 +5,38 @@
 
 import { memo } from 'react'
 import styled from 'styled-components'
+import { If, Then, Else } from 'react-if'
 
 import {
+	IntroId,
 	SubsectionContainer,
 	SubsectionDescription,
 	SubsectionTitle,
 } from '../../styles/reports.js'
-import type {
+import {
+	ActivityAttribute,
 	AttributeBlock,
+	ComplexMeasurementsTableAttribute,
 	ComplexTableAttribute,
 	GraphData,
+	ReportType,
 } from '../../types.js'
 import { GraphComponent } from '../GraphComponent/GraphComponent.js'
 import { AttributeValuesRelatedFlagsRow } from '../tables/AttributeValuesRelatedFlagsRow.js'
 import { Table, Tbody } from '../tables/styles.js'
 import { TableHead } from '../tables/TableHead.js'
+import { AttributeValuesRelatedFlagsMeasurementsRow } from '../tables/AttributeValuesRelatedFlagsMeasurementsRow.js'
+import { SingleChartComponent } from '../SingleChartComponent/SingleChartComponent.js'
 
 export const ComplexTableComponent: React.FC<{
-	dataObject: AttributeBlock<ComplexTableAttribute>
+	dataObject: AttributeBlock<ComplexTableAttribute | ComplexMeasurementsTableAttribute>
+	type: ReportType
+	chartData: AttributeBlock<ActivityAttribute> | undefined 
 	relatedGraphs: Map<string, GraphData> | undefined
-}> = memo(function ComplexTableComponent({ dataObject, relatedGraphs }) {
+}> = memo(function ComplexTableComponent({ dataObject, type, chartData, relatedGraphs }) {
+	const target = chartData?.data?.[0]
+	const related = chartData?.data?.[1]
+
 	return (
 		<SubsectionContainer>
 			<SubsectionTitle>{dataObject.title}</SubsectionTitle>
@@ -34,19 +46,13 @@ export const ComplexTableComponent: React.FC<{
 				{dataObject.data?.map((row, ridx) => {
 					const id = row[0] as string
 					const graph = relatedGraphs?.get(id)
+					const relatedActivity = related !== undefined ? related.value.filter(e => e.entity_id == id)[0] : undefined
+
 					return (
 						<TableGraphContainer key={`related-flags-${id}`}>
-							<Table>
-								{dataObject.columns && (
-									<TableHead columns={dataObject.columns} />
-								)}
-								<Tbody>
-									<AttributeValuesRelatedFlagsRow
-										key={`row-${ridx}`}
-										row={row}
-									/>
-								</Tbody>
-							</Table>
+
+							<IntroId>{dataObject.columns[0]}:{row[0]}</IntroId>
+
 							{graph && (
 								<GraphComponent
 									key={id}
@@ -55,6 +61,39 @@ export const ComplexTableComponent: React.FC<{
 									width={300}
 								/>
 							)}
+
+							<Table>
+								{dataObject.columns && (
+									<TableHead columns={dataObject.columns.slice(1)} />
+								)}
+								<Tbody>
+
+
+								<If condition={type !== ReportType.FlagsMeasurements}>
+									<Then>
+										<AttributeValuesRelatedFlagsRow
+											key={`row-${ridx}`}
+											row={row}
+										/>
+									</Then>
+									<Else>
+										<AttributeValuesRelatedFlagsMeasurementsRow
+											key={`row-${ridx}`}
+											row={row}
+										/>
+									</Else>
+								</If>
+								</Tbody>
+							</Table>
+
+							{target &&
+							related &&
+							relatedActivity &&
+							(<SingleChartComponent
+								target={target}
+								related={relatedActivity}
+								key={`chart-1`}
+							/>)}
 						</TableGraphContainer>
 					)
 				})}

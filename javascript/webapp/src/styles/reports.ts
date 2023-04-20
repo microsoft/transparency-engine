@@ -22,6 +22,12 @@ export const SubsectionTitle = styled.h3`
 	margin-bottom: 0;
 `
 
+export const IntroId = styled.div`
+	padding-top: 20px;
+	font-weight: bold;
+	color: ${({ theme }: { theme: ITheme }) => theme.palette.neutralSecondary};
+`
+
 export const SubsectionDescription = styled.p``
 
 export const EntityId = styled.p`

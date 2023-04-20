@@ -4,20 +4,19 @@
  */
 import styled from 'styled-components'
 
-import type { Flag, FlagEntry, Paths } from '../../types.js'
-import { EvidenceCellContent } from './EvidenceCellContent.js'
-import { FlexColumn, Key, Td, Tr, Value } from './styles.js'
+import type { FlagMeasurement, FlagMeasurementEntry, Paths } from '../../types.js'
+import { FlexColumn, Key, Td, Tr, Value, MeasureName } from './styles.js'
 
-export interface AttributeValuesRelatedFlagsRowProps {
-	row: FlagEntry
+export interface AttributeValuesRelatedFlagsMeasurementsRowProps {
+	row: FlagMeasurementEntry
 }
 
-export const AttributeValuesRelatedFlagsRow: React.FC<
-	AttributeValuesRelatedFlagsRowProps
+export const AttributeValuesRelatedFlagsMeasurementsRow: React.FC<
+AttributeValuesRelatedFlagsMeasurementsRowProps
 > = ({ row }) => (
 	<Tr>
 		<PathsCell paths={row[1]} />
-		<FlagCell flags={row[2]} />
+		<MeasurementsCell measurements={row[2]} />
 	</Tr>
 )
 
@@ -55,14 +54,14 @@ const IndirectPathsContainer = styled.div`
 	gap: 8px;
 `
 
-const FlagCell = ({ flags }: { flags: Flag[] }) => (
+const MeasurementsCell = ({ measurements }: { measurements: FlagMeasurement[] }) => (
 	<FlagsContainer>
 		<FlagsColumn>
-			{flags.map((flag, fidx) => (
-				<FlagContainer key={`flag-${fidx}`}>
-					<FlagName>{flag.flag}</FlagName>
-					<EvidenceCellContent evidence={flag.evidence} />
-				</FlagContainer>
+			{measurements.map((measure, fidx) => (
+				<MeasureContainer key={`flag-${fidx}`}>
+					<MeasureName>{measure.key}</MeasureName>
+					<MeasureValue>{measure.value}</MeasureValue>
+				</MeasureContainer>
 			))}
 		</FlagsColumn>
 	</FlagsContainer>
@@ -74,8 +73,11 @@ const FlagsColumn = styled(FlexColumn)`
 	gap: 20px;
 `
 
-const FlagContainer = styled(FlexColumn)`
+const MeasureContainer = styled.div`
 	gap: 8px;
+	display: flex;
 `
 
-const FlagName = styled.div``
+const MeasureValue = styled.div`
+	display: inline-block;
+`

@@ -14,7 +14,7 @@ export const EvidenceCellContent: React.FC<EvidenceCellContentProps> = ({
 	evidence,
 }) => (
 	<Container>
-		{evidence.map((evidence, index) => (
+		{evidence !== undefined && evidence.map((evidence, index) => (
 			<EvidenceRow key={`flag-cell${index}`}>
 				{typeof evidence === 'string' && <Value>{evidence}</Value>}
 
