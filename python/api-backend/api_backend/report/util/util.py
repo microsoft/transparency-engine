@@ -116,7 +116,7 @@ def get_measurements(report_section):
             if key == related or key == link_summary or "average" in key or key == "flag_count":
                 continue
             new_key = key.split("_")[0] if "score" in key else key.replace("_", " ")
-            measurements.append({"key": new_key, "value": round(100 * item.get(key, 0), 2)})
+            measurements.append({"key": new_key, "value": round(100 * item.get(key, 0), 1)})
     return measurements
 
 
