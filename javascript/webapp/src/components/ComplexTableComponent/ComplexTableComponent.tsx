@@ -57,8 +57,8 @@ export const ComplexTableComponent: React.FC<{
 								<GraphComponent
 									key={id}
 									data={graph}
-									height={300}
-									width={300}
+									height={450}
+									width={450}
 								/>
 							)}
 
