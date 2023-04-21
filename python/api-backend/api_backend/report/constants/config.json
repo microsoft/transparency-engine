@@ -106,7 +106,7 @@
         "title": "",
         "intro": "",
         "type": "flags-measurements",
-        "columns": ["Entity ID", "Relationship Paths", "Measurements"],
+        "columns": ["Entity ID", "Relationship Paths", "Similarity"],
         "format": "complex-table",
         "data": []
       },
@@ -129,7 +129,7 @@
         "title": "",
         "intro": "",
         "type": "flags-measurements",
-        "columns": ["Entity ID", "Relationship Paths", "Measurements"],
+        "columns": ["Entity ID", "Relationship Paths", "Similarity"],
         "format": "complex-table",
         "data": []
       },
