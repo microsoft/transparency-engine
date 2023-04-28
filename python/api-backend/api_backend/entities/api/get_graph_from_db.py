@@ -3,14 +3,18 @@
 # Licensed under the MIT license. See LICENSE file in the project.
 #
 
+import json
 import os
 from typing import Optional
 
 import pandas as pd
 from sqlalchemy import MetaData, Table, and_, select
 
+from api_backend.entities.util.style_graph import style_graph
 from api_backend.model.graph_model import Graph
 from api_backend.util.db_engine import get_engine
+
+constants_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "constants"))
 
 
 def get_graph_from_db(source: str, target: Optional[str] = None) -> Graph:
@@ -82,6 +86,36 @@ def get_graph_from_db(source: str, target: Optional[str] = None) -> Graph:
     conn.close()
 
     return generate_graph_specs(graph_df2)
+
+
+def get_graph_schema_from_db(source: str, target: Optional[str] = None):
+    """
+    Retrieves a graph from the database using the given source and target nodes, and returns it as a Vega Schema.
+
+    Args:
+        source: A string representing the source node for the graph.
+        target: An optional string representing the target node for the graph.
+
+    Returns:
+        A Vega Schema.
+    """
+    raw_graph = get_graph_from_db(source, target)
+    template = {}
+    try:
+        with open(os.path.join(constants_folder, "schema.json")) as f:
+            template = json.load(f)
+        
+        nodes = raw_graph['nodes'] if 'nodes' in raw_graph else []
+        edges = raw_graph['edges'] if 'edges' in raw_graph else []
+
+        if not nodes or not edges:
+            return {}
+        
+        return style_graph(raw_graph, template)
+    except json.JSONDecodeError as e:
+        raise ValueError("Invalid JSON syntax in schema file") from e
+    except FileNotFoundError as e:
+        raise ValueError("template.json file not found") from e
 
 
 def generate_graph_specs(graph_df: pd.DataFrame):

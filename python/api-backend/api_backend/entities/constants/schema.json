@@ -1,0 +1,157 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A node-link diagram with force-directed layout of entity relationships with labels.",
+  "padding": 0,
+  "autosize": "none",
+  "width": 800,
+  "height": 800,
+  "signals": [
+    { "name": "cx", "update": "width / 2" },
+    { "name": "cy", "update": "height / 2" },
+    { "name": "nodeRadius", "value": 30 },
+    { "name": "nodeCharge", "value": -100 },
+    { "name": "linkDistance", "value": 100 },
+    { "name": "static", "value": true },
+    {
+      "description": "State variable for active node fix status.",
+      "name": "fix",
+      "value": false,
+      "on": [
+        {
+          "events": "symbol:mouseout[!event.buttons], window:mouseup",
+          "update": "false"
+        },
+        {
+          "events": "symbol:mouseover",
+          "update": "fix || true"
+        },
+        {
+          "events": "[symbol:mousedown, window:mouseup] > window:mousemove!",
+          "update": "xy()",
+          "force": true
+        }
+      ]
+    },
+    {
+      "description": "Graph node most recently interacted with.",
+      "name": "node",
+      "value": null,
+      "on": [
+        {
+          "events": "symbol:mouseover",
+          "update": "fix === true ? item() : node"
+        }
+      ]
+    },
+    {
+      "description": "Flag to restart Force simulation upon data changes.",
+      "name": "restart",
+      "value": false,
+      "on": [{ "events": { "signal": "fix" }, "update": "fix && fix.length" }]
+    }
+  ],
+
+  "data": [
+    {
+      "name": "node-data"
+    },
+    {
+      "name": "link-data"
+    }
+  ],
+  "marks": [
+    {
+      "type": "path",
+      "from": { "data": "link-data" },
+      "interactive": false,
+      "encode": {
+        "update": {
+          "strokeWidth": { "value": 0.5 }
+        }
+      },
+      "transform": [
+        {
+          "type": "linkpath",
+          "require": { "signal": "force" },
+          "shape": "line",
+          "sourceX": "datum.source.x",
+          "sourceY": "datum.source.y",
+          "targetX": "datum.target.x",
+          "targetY": "datum.target.y"
+        }
+      ]
+    },
+    {
+      "name": "nodes",
+      "type": "symbol",
+      "from": { "data": "node-data" },
+      "on": [
+        {
+          "trigger": "fix",
+          "modify": "node",
+          "values": "fix === true ? {fx: node.x, fy: node.y} : {fx: fix[0], fy: fix[1]}"
+        },
+        {
+          "trigger": "!fix",
+          "modify": "node",
+          "values": "{fx: null, fy: null}"
+        }
+      ],
+      "encode": {
+        "enter": {
+          "shape": { "signal": "datum.encoding.shape" },
+          "fill": { "signal": "datum.encoding.fill" },
+          "stroke": { "signal": "datum.encoding.stroke" },
+          "strokeWidth": { "signal": "datum.encoding.strokeWidth" },
+          "opacity": { "signal": "datum.encoding.opacity" },
+          "fx": { "signal": "datum.relationship === 'target' ? 40 : null" },
+          "fy": { "signal": "datum.relationship === 'target' ? height / 2 : null" },
+          "offset": { "signal": "-(datum.encoding.size / 2) - 6" }
+        },
+        "update": {
+          "size": { "signal": "datum.encoding.size * datum.encoding.size" },
+          "cursor": { "value": "pointer" }
+        }
+      },
+      "transform": [
+        {
+          "type": "force",
+          "iterations": 300,
+          "restart": { "signal": "restart" },
+          "static": { "signal": "static" },
+          "signal": "force",
+          "forces": [
+            {
+              "force": "center",
+              "x": { "signal": "cx" },
+              "y": { "signal": "cy" }
+            },
+            { "force": "collide", "radius": { "signal": "nodeRadius" } },
+            { "force": "nbody", "strength": { "signal": "nodeCharge" } },
+            {
+              "force": "link",
+              "links": "link-data",
+              "distance": { "signal": "linkDistance" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "from": { "data": "nodes" },
+      "encode": {
+        "enter": {
+          "align": { "value": "center" },
+          "baseline": { "value": "middle" },
+          "text": { "field": "datum.name" }
+        },
+        "update": {
+          "xc": { "field": "x" },
+          "yc": { "field": "y" },
+          "dy": { "field": "offset" }
+        }
+      }
+    }
+  ]
+}

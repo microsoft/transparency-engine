@@ -5,7 +5,7 @@
 
 from fastapi import APIRouter, Query
 
-from api_backend.entities.api.get_graph import get_graph
+from api_backend.entities.api.get_graph import get_graph, get_graph_schema
 
 entities_router = APIRouter()
 
@@ -18,3 +18,7 @@ async def main():
 @entities_router.get("/graph/{source}")
 async def graph(source, target=Query(None)):
     return await get_graph(source, target)
+
+@entities_router.get("/graph/schema/{source}")
+async def graph_schema(source, target=Query(None)):
+    return await get_graph_schema(source, target)
