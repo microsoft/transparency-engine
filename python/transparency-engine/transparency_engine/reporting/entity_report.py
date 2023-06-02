@@ -166,6 +166,7 @@ def generate_report(  # nosec - B107
         attribute_join_token=attribute_join_token,
         edge_join_token=edge_join_token,
     ).cache()
+    flag_data.show(5)
     logger.info(f"Finished generating entity flag report: {flag_data.count()}")
 
     # generate activity data

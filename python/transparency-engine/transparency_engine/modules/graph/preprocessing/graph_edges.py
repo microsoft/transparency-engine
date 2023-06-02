@@ -10,16 +10,11 @@ from typing import Union
 import pyspark.sql.functions as F
 
 from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql.types import StringType
 
 import transparency_engine.modules.similarity.similarity_score as similarity_score
 import transparency_engine.pipeline.schemas as schemas
 
-from transparency_engine.spark.utils import spark
-
-
 logger = logging.getLogger(__name__)
-
 
 def generate_unipartite_edges(
     entity_attribute_data: DataFrame,
@@ -119,7 +114,7 @@ def generate_bipartite_edges(
             Contains data of all attributes with schema [entity_col, attribute_col, value_col] or [entity_col, attribute_col, value_col, time_col]
         fuzzy_match_data: Spark DataFrame
             Contain results of fuzzy matching on attribute values, with schema [Source, Target, Similarity, attribute_col]
-        attribute : str
+        attribute: str
             Name of the entity attribute to peform exact matching
         entity_col: str, default = 'EntityID'
             Name of the entity column in the entity_attribute_data dataframe
@@ -186,7 +181,9 @@ def generate_bipartite_edges(
 
 
 def __compute_exact_match_jaccard_weights(
-    attribute_data: DataFrame, attribute: str, entity_col: str = "EntityID"
+    attribute_data: DataFrame, 
+    attribute: str, 
+    entity_col: str = "EntityID"
 ) -> DataFrame:
     """
     Compute jaccard weights for the entity-entity unipartite graph based on exact matching of entity attributes
@@ -205,9 +202,8 @@ def __compute_exact_match_jaccard_weights(
         exact_matches: Spark DataFrame
             The entity-entity unipartite graph's edge list with schema [Source, Target, Weight]
     """
-    spark = SparkSession.builder.getOrCreate()
-
     # get entity-entity pairs that exactly match on the given attribute
+    spark = SparkSession.getActiveSession()
     attribute_data.createOrReplaceTempView(f"{attribute}_temp")
     exact_matches = spark.sql(
         f"""
@@ -276,6 +272,7 @@ def __compute_fuzzy_match_jaccard_weights(
             The entity-entity unipartite graph's edge list with schema [Source, Target, Weight]
     """
     # get entity-entity pairs that have fuzzy match on the given attribute
+    spark = SparkSession.getActiveSession()
     attribute_data.createOrReplaceTempView(f"{attribute}_temp")
     fuzzy_match_data.createOrReplaceTempView(f"{attribute}_fuzzy_temp")
     fuzzy_matches = spark.sql(
@@ -366,7 +363,7 @@ def __generate_unipartite_jaccard_edges(
     )
     # exact matches
     exact_matches = __compute_exact_match_jaccard_weights(
-        attribute_data=attribute_data, attribute=attribute, entity_col=entity_col
+        attribute_data=attribute_data, attribute=attribute, entity_col=entity_col,
     ).cache()
     logger.info(f"Exact matches: {exact_matches.count()}")
 
@@ -436,6 +433,7 @@ def __generate_unipartite_unnormalized_edges(
     attribute_data.createOrReplaceTempView(f"{attribute}_temp")
 
     # exact matches
+    spark = SparkSession.getActiveSession()
     exact_matches = spark.sql(
         f"""
             SELECT DISTINCT

@@ -222,7 +222,7 @@ def compute_network_score(  # nosec - B107
         *["TARGET_FLAGGED_COUNT", "TARGET_FLAGGED_WEIGHT"]
     )
 
-    # normalize measures using max scaler and rank scaler
+    # normalize measures using max scaler or rank scaler
     measure_cols = [column for column in NetworkMeasures.list()]
     for measure in configs.selected_measures:
         if measure.normalization == NormalizationTypes.BY_MAX_VALUE:
@@ -243,6 +243,7 @@ def compute_network_score(  # nosec - B107
                 output_col=scaled_output_col,
             )
             measure_cols.append(scaled_output_col)
+    network_measure_data = network_measure_data.fillna(0)
 
     # collect all calculated measures to be used for scoring
     all_measures = F.create_map(

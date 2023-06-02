@@ -9,8 +9,6 @@ This script initializes a SparkSession and SparkContext, and creates a SparkConf
 The SparkSession is created using either an active SparkSession or a new SparkSession builder.
 The SparkContext is retrieved using the getOrCreate method.
 Finally, the SparkConf object is created using the getConf method on the SparkContext object.
-
-The idea is that this is generally available and we avoid a more verbose import/initialization
 """
 
 # Import required modules
@@ -19,7 +17,7 @@ from pyspark.sql import SparkSession
 
 
 # Initialize SparkSession and SparkContext
-config = SparkConf().setAll([("spark.executor.allowSparkContext", "true")])
+config = SparkConf().setAll([("spark.executor.allowSparkContext", "true"), ("spark.port.maxRetries", "200")])
 
 spark: SparkSession = (
     SparkSession.builder.appName("Transparency Engine")

@@ -16,7 +16,7 @@ from faker import Faker
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StringType
 
-from transparency_engine.modules.data_shaper.spark_transform import column_to_list
+import transparency_engine.modules.data_shaper.spark_transform as transform
 from transparency_engine.pipeline.schemas import ATTRIBUTE_ID, TIME_PERIOD, VALUE
 
 
@@ -138,12 +138,12 @@ def map_attributes(
     Returns:
         result_df (DataFrame): updated dataframe
     """
-    attribute_list = column_to_list(data=data, column=attribute_col)
+    attribute_list = transform.column_to_list(data=data, column=attribute_col)
 
     new_data = []
     for attribute in attribute_list:
         attribute_data = data.filter(F.col(attribute_col) == attribute)
-        attribute_values = column_to_list(data=attribute_data, column=VALUE)
+        attribute_values = transform.column_to_list(data=attribute_data, column=VALUE)
 
         # map original value to fake value
         value_mapping: Dict[str, str] = {}
@@ -169,7 +169,7 @@ def map_time(data: DataFrame, time_col: str = TIME_PERIOD) -> DataFrame:
     Returns:
         result_df (DataFrame): updated dataframe
     """
-    time_periods = column_to_list(data=data, column=time_col)
+    time_periods = transform.column_to_list(data=data, column=time_col)
     time_periods = [int(period) for period in time_periods]
     time_periods.sort()
 

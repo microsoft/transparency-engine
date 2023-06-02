@@ -125,10 +125,10 @@ class USENodeLinkEstimator(BaseNodeLinkEstimator[UnfoldedGraph, UnfoldedGraphNod
             components = anchor_components
         else:
             components = unfold_components
-
         # get node embedding for each component and index the embedding for ANN search
         component_embeddings = {}
         for component_index, component in enumerate(components):
+            logger.info(f'Component ID: {len(component.get_nodes())}')
             embedder = UnfoldedSpectralEmbed(
                 node_type=self.node_type,
                 embedding_dim=self.embedding_dim,
@@ -172,6 +172,7 @@ class USENodeLinkEstimator(BaseNodeLinkEstimator[UnfoldedGraph, UnfoldedGraphNod
         # get nearest neighbors for all nodes in each component
         all_links = []
         for component in self.embedding:
+            logger.info(f'Component ID: {component}')
             embedding: BaseNodeEmbedding = self.embedding[component]
             inferred_links = get_all_closet_pairs(
                 vectors=embedding.embedding_vectors,
@@ -180,13 +181,14 @@ class USENodeLinkEstimator(BaseNodeLinkEstimator[UnfoldedGraph, UnfoldedGraphNod
                 n_probe=self.ann_probe,
                 n_neighbors=self.n_neighbors,
                 min_similarity=self.min_similarity,
-            )
+            ) 
 
             for link in inferred_links:
-                source_node: UnfoldedGraphNode = embedding.nodes[link[0]]
-                target_node: UnfoldedGraphNode = embedding.nodes[link[1]]
-                similarity_score: float = link[2]
-                all_links.append((source_node, target_node, similarity_score))
+                if link[0] < len(embedding.nodes) and link[1] < len(embedding.nodes):
+                    source_node: UnfoldedGraphNode = embedding.nodes[link[0]]
+                    target_node: UnfoldedGraphNode = embedding.nodes[link[1]]
+                    similarity_score: float = link[2]
+                    all_links.append((source_node, target_node, similarity_score))
 
         return all_links
 

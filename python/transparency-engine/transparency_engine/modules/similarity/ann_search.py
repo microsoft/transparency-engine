@@ -51,9 +51,16 @@ def get_all_closet_pairs(
     if vectors.ndim != 2:
         raise ValueError("Vectors to be indexed should be a 2d array")
     else:
+        if vectors.shape[0] == 0:
+            return []
+        
         # build IVF index for embedding
         if n_list is None:
-            n_list = int(4 * sqrt(vectors.shape[0]))
+            n_vectors = vectors.shape[0]
+            if n_vectors < 1000:
+                n_list = 1
+            else:
+                n_list = int(sqrt(n_vectors))
         index = index_vectors_ivf(vectors=vectors, n_list=n_list, normalize=normalize)
         index.nprobe = min(n_probe, n_list, len(vectors))
 

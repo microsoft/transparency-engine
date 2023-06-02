@@ -490,6 +490,33 @@ def remove_low_confidence_links(
         paths, join_token, entity_col, max_path_length
     )
 
+    # remove low confidence paths
+    cleaned_paths = []
+    for path, entity_pairs in zip(paths, all_entity_pairs):
+        # for this path to be included, all entity pairs need to pass confidence criteria
+        is_confident_path = True
+        for pair in entity_pairs:
+            # check if there is at least 1 non-noisy link or multiple noisy/non-noisy links
+            is_confident_pair = True
+            links = entity_links[pair]
+            if len(links) > 1:
+                is_confident_pair = True
+            else:
+                if has_fuzzy_link(links[0], entity_col, join_token):
+                    is_confident_pair = False
+                else:
+                    for node in links[0]:
+                        if node.split(join_token)[0] in noisy_relationships:
+                            is_confident_pair = False
+                            break
+            if not is_confident_pair:
+                is_confident_path = False
+                break
+        if is_confident_path:
+            cleaned_paths.append(path)
+    return cleaned_paths
+
+    '''
     # Remove low confidence paths
     return [
         path
@@ -506,7 +533,7 @@ def remove_low_confidence_links(
             for pair in entity_pairs
         )
     ]
-
+    '''
 
 def add_missing_links(
     predicted_links: DataFrame,
@@ -545,9 +572,10 @@ def add_missing_links(
     -------
         A dataframe of predicted links with missing links added.
     """
-    missing_links = get_missing_links(predicted_links)
-    if missing_links.count() > 0:
-        logger.info(f"missing_link count: {missing_links.count()}")
+    missing_links = get_missing_links(predicted_links).cache()
+    missing_links_count = missing_links.count()
+    logger.info(f"missing link count: {missing_links_count}")
+    if missing_links_count > 0:
         valid_links = get_valid_links(
             predicted_links=missing_links,
             graph=graph,
@@ -562,7 +590,7 @@ def add_missing_links(
             max_dynamic_chain_length=max_dynamic_chain_length,
             min_direct_links=min_direct_links,
         ).cache()
-
+        valid_links.show(5)
         logger.info(f"new link count: {valid_links.count()}")
 
         # filter out paths that contain new entities

@@ -54,6 +54,7 @@ from transparency_engine.preprocessing.text.lsh_fuzzy_matching import (
     LSHConfig,
     LSHFuzzyMatchTransformer,
 )
+from transparency_engine.modules.graph.preprocessing.data_formatting import format_attribute_data
 from transparency_engine.typing import InputLoadTypes, PipelineSteps
 
 
@@ -131,25 +132,27 @@ class TransparencyPipeline:
             fuzzy_df: Union[DataFrame, None] = None
             for substep in prep_step.get("steps", []):
                 if substep == "load":
-
                     logger.info(f"Loading: {input_path}")
                     result_df = load_data_handler.load_data(
                         input_path, mode=DataHandlerModes.CSV, schema=input_type.schema
                     )
-
+                    if input_type.name in [InputLoadTypes.Dynamic.name, InputLoadTypes.Static.name]:
+                        result_df = format_attribute_data(result_df)
+                        
                     # Save dataframe in current working directory
                     self.data_handler.write_data(result_df, input_name)
 
                 elif substep == "fuzzy_match" and result_df is not None:
-                    # Using default config
                     fuzzy_config = {
-                        attr: LSHConfig()
-                        for attr in prep_step.get("fuzzy_match_on", [])
+                        attr.get("name", ""): LSHConfig(**attr.get("config", {}))
+                            for attr in prep_step.get("fuzzy_match_on", [])
                     }
+                    logger.info(fuzzy_config)
                     fuzzy_df = LSHFuzzyMatchTransformer(fuzzy_config).transform(
                         result_df
                     )
-
+                    fuzzy_df.show(5)
+                    self.data_handler.write_data(fuzzy_df, f"{input_name}_fuzzy_match")
                 elif substep == "preprocess" and result_df is not None:
                     result_df = self._preprocess(
                         result_df=result_df,
@@ -172,22 +175,25 @@ class TransparencyPipeline:
             PipelineSteps.IND_LINK_PREDICTION, {}
         )
 
-        for static_input in linking_steps.get("static"):
+        for static_input in linking_steps.get("static", []):
             input_name = static_input.get("name", "")
             prep_df = self.data_handler.load_data(f"{input_name}_prep")
 
-            static_config = USEStaticLinkConfig()
+            config_dict = static_input.get("config", {})
+            static_config = USEStaticLinkConfig(**config_dict)
+            logger.info(static_config)
             links_df = USEStaticLinkEstimator(static_config, input_name).predict(
                 prep_df
             )
-
             self.data_handler.write_data(links_df, f"{input_name}_links")
 
         for dynamic_input in linking_steps.get("dynamic"):
             input_name = dynamic_input.get("name", "")
             prep_df = self.data_handler.load_data(f"{input_name}_prep")
 
-            dynamic_config = USEDynamicLinkConfig()
+            config_dict = dynamic_input.get("config", {})
+            dynamic_config = USEDynamicLinkConfig(**config_dict)
+            logger.info(dynamic_config)
             links_df = USEDynamicLinkEstimator(dynamic_config, input_name).predict(
                 prep_df
             )
@@ -208,15 +214,9 @@ class TransparencyPipeline:
             links_df = self.data_handler.load_data(f"{input_name}_links")
             multipartite_df = self.data_handler.load_data(f"{input_name}_prep")
 
-            async_attributes = dynamic_input.get("config", {}).get(
-                "async_attributes", []
-            )
-            sync_attributes = dynamic_input.get("config", {}).get("sync_attributes", [])
-
-            config = DynamicLinkFilteringConfig()
-            config.async_attributes = async_attributes
-            config.sync_attributes = sync_attributes
-
+            config_dict = dynamic_input.get("config", {})
+            config = DynamicLinkFilteringConfig(**config_dict)
+            logger.info(config)
             filtered_links_df, multipartite_filtered_df = DynamicIndividualLinkFilter(
                 data_type=input_name,
                 config=config,
@@ -248,7 +248,8 @@ class TransparencyPipeline:
             for input_name in linking_step.get("inputs", [])
         ]
 
-        macro_config = USEStaticLinkConfig()
+        config_dict = linking_step.get("config", {})
+        macro_config = USEStaticLinkConfig(**config_dict)
         macro_links_df = USEMacroLinkEstimator(configs=macro_config).predict(
             dataframes_list
         )
@@ -266,11 +267,24 @@ class TransparencyPipeline:
         input_name = filtering_step.get("name", "")
 
         macro_links_df = self.data_handler.load_data(f"{input_name}_links")
-        static_dataframes_list = [
-            self._to_multipartite(self.data_handler.load_data(input.get("name", "")))
-            for input in filtering_step.get("static", [{}])
-        ]
 
+        static_dataframes_list = []
+        for input in filtering_step.get("static", [{}]):
+            static_name = input.get("name", "")
+            if input.get("config", {}).get("include_fuzzy_match", False):
+                static_dataframes_list.append(
+                    self._to_multipartite(
+                        self.data_handler.load_data(static_name), 
+                        self.data_handler.load_data(f"{static_name}_fuzzy_match"),
+                    )
+                )
+            else:
+                static_dataframes_list.append(
+                    self._to_multipartite(
+                        self.data_handler.load_data(static_name)
+                    )
+                )
+                
         dynamic_dataframes_list = [
             self.data_handler.load_data(f"{input.get('name', '')}_filtered_graph")
             for input in filtering_step.get("dynamic", [{}])
@@ -278,7 +292,9 @@ class TransparencyPipeline:
 
         dataframes_list = static_dataframes_list + dynamic_dataframes_list
 
-        macro_config = MacroLinkFilteringConfig()
+        config_dict = filtering_step.get("config", {})
+        macro_config = MacroLinkFilteringConfig(**config_dict)
+        logger.info(macro_config)
         macro_filtered_links_df = MacroLinkFilter(
             config=macro_config, multipartite_tables=dataframes_list
         ).filter(macro_links_df)
@@ -313,14 +329,13 @@ class TransparencyPipeline:
         ).cache()
         logger.info(f"Finished computing entity score: {entity_score_df.count()}")
         entity_score_df.show(5)
+        self.data_handler.write_data(entity_score_df, "entity_scoring")
 
         network_score_df = network_scoring.compute_network_score(
             entity_score_df, predicted_links_df
         )
         logger.info(f"Finished computing network score")
         network_score_df.show(5)
-
-        self.data_handler.write_data(entity_score_df, "entity_scoring")
         self.data_handler.write_data(network_score_df, "network_scoring")
 
     def report(self) -> None:

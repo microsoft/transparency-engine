@@ -23,9 +23,9 @@ def lsh_match_text(
     include_word_delimiter: bool = True,
     ngram_length: int = 4,
     num_hash_tables: int = 3,
-    min_df: float = 0.001,
+    min_df: float = 0.0001,
     max_df: float = 0.1,
-    min_similarity: float = 0.9,
+    min_similarity: float = 0.8,
 ) -> DataFrame:
     """
     Perform text fuzzy matching on a given text column of a dataframe by calculating jaccard similarity on ngrams using MinHash
@@ -43,11 +43,11 @@ def lsh_match_text(
             Length of substrings on which we will calculate jaccard similarity (default = 4)
         num_hash_tables:int, default = 3
             Number of hash tables used by LSH. Increasing has table numbers will increase the accuracy but will also increase compute time.
-        min_df: float, default = 0.001
+        min_df: float, default = 0.0001
             min number of different text values an ngram must appear in to be included in the vocabulary
         max_df: float, default = 0.1
             max fraction of different text values an ngram must appear in to be included in the vocabulary
-        min_similarity: float, default = 0.9
+        min_similarity: float, default = 0.8
             Remove all text matching pairs with jacard similarity below this threshold
 
     Returns:
