@@ -644,7 +644,6 @@ def get_link_score_summary(scores: DataFrame, attributes: List[str]):
         flatten_scores: DataFrame:
             Flatten dataframe where each column contains the jaccard similarity score for an attribute type.
     """
-
     period_scores = scores.filter(F.col("type") == "overall").selectExpr(
         schemas.SOURCE, schemas.TARGET, "period_jaccard_score AS period_score"
     )
@@ -659,9 +658,11 @@ def get_link_score_summary(scores: DataFrame, attributes: List[str]):
         attribute_scores = attribute_scores.withColumnRenamed(
             attribute, f"{attribute}_score"
         )
+    attribute_scores = attribute_scores.fillna(0)
     attribute_scores = attribute_scores.withColumn(
         "average_score", mean_list_udf(F.array(*[f"{att}_score" for att in attributes]))
     )
+    attribute_scores.show(5)
     flatten_scores = period_scores.join(
         attribute_scores, on=[schemas.SOURCE, schemas.TARGET], how="inner"
     )

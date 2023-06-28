@@ -229,6 +229,7 @@ class USEDynamicLinkEstimator(BaseLinkEstimator[USEDynamicLinkConfig]):
             self.target_type_col,
             self.relationship_col,
         )
+        predicted_link_df.show(5)
         return predicted_link_df
 
     def __predict_async_links(self, unfolded_graph: UnfoldedGraph) -> DataFrame:
@@ -288,6 +289,7 @@ class USEDynamicLinkEstimator(BaseLinkEstimator[USEDynamicLinkConfig]):
             self.target_type_col,
             self.relationship_col,
         )
+        predicted_link_df.show(5)
         return predicted_link_df
 
     def __aggregate_dynamic_links(
@@ -315,7 +317,7 @@ class USEDynamicLinkEstimator(BaseLinkEstimator[USEDynamicLinkConfig]):
             .agg(F.max(self.weight_col).alias(self.weight_col))
             .cache()
         )
-        logger.info(f"filtered async link count: {async_link_df.count()}")
+        logger.info(f"Filtered async link count: {async_link_df.count()}")
 
         # aggregate links
         all_link_df = sync_link_df.select(

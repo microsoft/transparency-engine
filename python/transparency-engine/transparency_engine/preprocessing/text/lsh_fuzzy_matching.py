@@ -28,7 +28,7 @@ class LSHConfig:
     num_hash_tables: int = 3
     min_df: float = 0.0001
     max_df: float = 0.1
-    min_similarity: float = 0.9
+    min_similarity: float = 0.8
 
 
 class LSHFuzzyMatchTransformer(BaseTransformer):

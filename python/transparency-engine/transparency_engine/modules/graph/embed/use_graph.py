@@ -228,7 +228,7 @@ class UnfoldedGraph(BaseGraph[UnfoldedGraphNode]):
             "UnfoldTargetId",
             F.lit(n_anchor_nodes) * F.col("UnfoldAttributeId") + F.col("TargetId"),
         )
-        graph_data.show(100)
+        graph_data.show(10)
         graph_data = (
             graph_data.selectExpr(
                 "SourceId AS RowId",
@@ -330,7 +330,7 @@ class UnfoldedGraph(BaseGraph[UnfoldedGraphNode]):
             components[: self.n_anchor_nodes],
             components[self.n_anchor_nodes :],
         ]
-        logger.info(components)
+
         # find all connected components that have at least one anchor and one unfolded nodes
         n_all_valid_components = min(np.max(components[0]), np.max(components[1])) + 1
         all_connected_components = []
@@ -340,10 +340,20 @@ class UnfoldedGraph(BaseGraph[UnfoldedGraphNode]):
             all_connected_components.append(
                 self.__subgraph(row_indices, column_indices, inplace=False)
             )
+        logger.info(f'Number of connected components: {len(all_connected_components)}')
 
+        # remove components that has less than min number of nodes
+        logger.info(f'Removing componets that have less than {min_component_size} nodes')
+        cleaned_components = [
+            component
+            for component in all_connected_components
+            if component and component.num_nodes() >= min_component_size
+        ]
+        logger.info(f'Number of retained components: {len(cleaned_components)}')
+        
         # create two sets of components sorted by either number of anchor or unfolded nodes
         anchor_components = sorted(
-            all_connected_components,
+            cleaned_components,
             key=lambda component: len(
                 component.get_nodes(UnfoldedNodeTypes.ANCHOR, partition)
             )
@@ -352,7 +362,7 @@ class UnfoldedGraph(BaseGraph[UnfoldedGraphNode]):
             reverse=True,
         )
         unfolded_components = sorted(
-            all_connected_components,
+            cleaned_components,
             key=lambda component: len(
                 component.get_nodes(UnfoldedNodeTypes.UNFOLD, partition)
             )
@@ -360,18 +370,7 @@ class UnfoldedGraph(BaseGraph[UnfoldedGraphNode]):
             else 0,
             reverse=True,
         )
-
-        # remove components that has less than min number of nodes
-        anchor_components = [
-            component
-            for component in anchor_components
-            if component and component.num_nodes() >= min_component_size
-        ]
-        unfolded_components = [
-            component
-            for component in unfolded_components
-            if component and component.num_nodes() >= min_component_size
-        ]
+    
         if n_components is None or n_components >= min(
             len(anchor_components), len(unfolded_components)
         ):

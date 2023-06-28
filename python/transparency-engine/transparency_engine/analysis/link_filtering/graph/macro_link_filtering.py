@@ -42,7 +42,6 @@ class MacroLinkFilteringConfig:
     )
     noisy_relationships: List[str] = field(default_factory=lambda: [])
 
-
 class MacroLinkFilter(BaseLinkFilter):
     """
     This filter removes macro links between nodes.

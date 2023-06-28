@@ -12,7 +12,7 @@ from pyspark.sql import DataFrame, functions as F
 
 import transparency_engine.pipeline.schemas as schemas
 
-from transparency_engine.modules.data_shaper.spark_transform import column_to_list
+import transparency_engine.modules.data_shaper.spark_transform as transform
 from transparency_engine.modules.graph.link_filtering.activity_scoring import (
     aggregate_all_activities,
     aggregate_all_activities_by_type,
@@ -586,7 +586,7 @@ def summarize_temporal_activities(
     result_list.append(overall_activity_counts)
 
     # calculate activity detail count by type for each period
-    attribute_types = column_to_list(activity_data, activity_attribute_type)
+    attribute_types = transform.column_to_list(activity_data, activity_attribute_type)
     for type in attribute_types:
         activity_type_data = activity_data.filter(
             F.col(activity_attribute_type) == type

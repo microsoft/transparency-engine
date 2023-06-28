@@ -55,7 +55,7 @@ class USEStaticLinkConfig(BaseLinkConfig):
     ann_probe: int = 10
     min_similarity: float = 0.5
     add_direct_links: bool = True
-    direct_link_min_weight: float = 1.0
+    direct_link_min_weight: float = 0.5
 
 
 class USEStaticLinkEstimator(BaseLinkEstimator[USEStaticLinkConfig]):

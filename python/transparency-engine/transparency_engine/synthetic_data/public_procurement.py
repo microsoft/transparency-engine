@@ -241,8 +241,8 @@ def generate_procurement_data(
     Gerenerate synthetic data for the public procurement use case.
 
     Params:
-        output_path: str
-            Path to save the synthesized data
+        config: DataGeneratorConfig
+            configurations for the generator
         n_entities: int, default = 1000
             Number of entities to generate
         n_communities: int, default = 20
